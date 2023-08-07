@@ -1,12 +1,13 @@
 use std::error::Error;
+use crate::controller::state::GitState;
 
 mod terminal;
-mod controller;
+pub mod controller;
 mod utils;
 
-pub fn start() -> Result<(), Box<dyn Error>> {
+pub fn start(state: &mut GitState) -> Result<(), Box<dyn Error>> {
     let mut terminal = terminal::setup_terminal()?;
-    terminal::run(&mut terminal)?;
+    terminal::run(&mut terminal, state)?;
     terminal::restore_terminal(&mut terminal)?;
     Ok(())
 }

@@ -14,14 +14,15 @@ use crossterm::{
         disable_raw_mode,
         enable_raw_mode,
         EnterAlternateScreen,
-        LeaveAlternateScreen
-    }
+        LeaveAlternateScreen,
+    },
 };
 
 use ratatui::{
     backend::{CrosstermBackend},
-    Terminal
+    Terminal,
 };
+use crate::controller::state::GitState;
 
 pub fn setup_terminal() -> Result<Terminal<CrosstermBackend<Stdout>>, Box<dyn Error>> {
     let mut stdout = io::stdout();
@@ -38,7 +39,7 @@ pub fn restore_terminal(
     Ok(terminal.show_cursor()?)
 }
 
-pub fn run(terminal: &mut Terminal<CrosstermBackend<Stdout>>) -> Result<(), Box<dyn Error>> {
+pub fn run(terminal: &mut Terminal<CrosstermBackend<Stdout>>, state: &mut GitState) -> Result<(), Box<dyn Error>> {
     Ok(loop {
         terminal.draw(ui::main)?;
 
