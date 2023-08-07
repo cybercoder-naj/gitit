@@ -18,4 +18,8 @@ impl GitState {
     pub fn set_unstaged_files(&mut self, files: Vec<String>) {
         self.unstaged_files = files;
     }
+
+    pub fn get_unstaged_files(&self) -> &Vec<String> {
+        &self.unstaged_files
+    }
 }

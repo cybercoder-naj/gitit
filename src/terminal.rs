@@ -22,6 +22,7 @@ use ratatui::{
     backend::{CrosstermBackend},
     Terminal,
 };
+
 use crate::controller::state::GitState;
 
 pub fn setup_terminal() -> Result<Terminal<CrosstermBackend<Stdout>>, Box<dyn Error>> {
@@ -41,7 +42,7 @@ pub fn restore_terminal(
 
 pub fn run(terminal: &mut Terminal<CrosstermBackend<Stdout>>, state: &mut GitState) -> Result<(), Box<dyn Error>> {
     Ok(loop {
-        terminal.draw(ui::main)?;
+        terminal.draw(|f| ui::main(f, state))?;
 
         // To quit the terminal
         if event::poll(Duration::from_millis(250))? {

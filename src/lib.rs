@@ -3,7 +3,6 @@ use crate::controller::state::GitState;
 
 mod terminal;
 pub mod controller;
-mod utils;
 
 pub fn start(state: &mut GitState) -> Result<(), Box<dyn Error>> {
     let mut terminal = terminal::setup_terminal()?;
