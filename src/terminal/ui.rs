@@ -1,15 +1,16 @@
 use ratatui::{
     Frame,
-    layout::{Constraint, Layout},
+    layout::{Constraint, Layout, Alignment},
     prelude::Direction,
-    widgets::{Block, Borders},
-    backend::Backend
+    widgets::{Block,
+              Borders,
+              Padding,
+              Paragraph},
+    backend::Backend,
+    text::{Line, Span},
+    style::{Color, Style}
 };
-use ratatui::layout::Alignment;
-use ratatui::prelude::Span;
-use ratatui::style::{Color, Style};
-use ratatui::text::Line;
-use ratatui::widgets::{Padding, Paragraph};
+
 use crate::controller::state::GitState;
 
 pub fn main<B: Backend>(frame: &mut Frame<B>, state: &mut GitState) {
@@ -35,16 +36,22 @@ pub fn main<B: Backend>(frame: &mut Frame<B>, state: &mut GitState) {
 
 fn generate_modified_files_paragraph<'a>(block: Block<'a>, state: &'a GitState) -> Paragraph<'a> {
     let text: Vec<_> = state
-        .get_unstaged_files()
+        .unstaged_files
         .iter()
-        .map(|s| {
+        .enumerate()
+        .map(|(i, s)| {
             let mut new_str = String::from("[ ] ");
-            new_str.push_str(s.as_ref());
+            new_str.push_str(s.filename.as_ref());
 
-            new_str
+            (i, new_str)
         })
-        .map(|s| {
-            Line::from(Span::styled(s, Style::default().fg(Color::Red)))
+        .map(|(i, s)| {
+            let mut style = Style::default().fg(Color::Red);
+            if i == usize::from(state.current_index) {
+                style = style.bg(Color::White);
+            }
+
+            Line::from(Span::styled(s, style))
         }).collect();
 
     Paragraph::new(text)
