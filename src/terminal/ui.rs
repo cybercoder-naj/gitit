@@ -40,24 +40,24 @@ fn generate_modified_files_paragraph<'a>(block: Block<'a>, state: &'a State) -> 
         .iter()
         .enumerate()
         .map(|(i, m_file)| {
-            let mut entry = String::from(
-                match m_file.checked {
-                    true => "[x] ",
-                    false => "[ ] "
-                }
-            );
+            let mut entry: String = String::new();
+            if i == state.current_index {
+                entry.push_str("> ");
+            } else {
+                entry.push_str("  ");
+            }
+            entry.push_str(match m_file.checked {
+                true => "[x] ",
+                false => "[ ] "
+            });
             entry.push_str(m_file.filename.as_ref());
 
-            let mut style = Style::default().fg(
+            let style = Style::default().fg(
                 match m_file.checked {
                     true => Color::Green,
                     false => Color::Red
                 }
             );
-            if i == state.current_index {
-                style = style.bg(Color::White);
-            }
-
             Line::from(Span::styled(entry, style))
         })
         .collect();

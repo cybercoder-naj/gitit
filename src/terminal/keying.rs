@@ -22,7 +22,7 @@ pub fn listen(state: &mut State) -> Result<bool, Box<dyn Error>> {
                     }
                 },
                 KeyCode::Down => {
-                    if state.current_index < state.unstaged_files.len() {
+                    if state.current_index < state.unstaged_files.len() - 1 {
                         state.current_index += 1;
                     }
                 },
