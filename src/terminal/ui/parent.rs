@@ -4,8 +4,9 @@ use ratatui::{
     widgets::{Block, Borders, Padding},
     Frame,
 };
+use crate::controller::state::State;
 
-pub fn render_parent_block<B: Backend>(frame: &mut Frame<B>, chunk: Rect) -> Rect {
+pub fn render_parent_block<B: Backend>(frame: &mut Frame<B>, chunk: Rect, _state: &State) -> Rect {
     let main_window = Block::default()
         .title("Gitit")
         .borders(Borders::ALL)

@@ -8,7 +8,8 @@ pub struct State {
     _commit_msg: String,
     _commit_desc: String,
     _branch_name: String,
-    pub(crate) current_index: usize,
+    pub(crate) current_index: isize,
+    pub(crate) button_index: isize
 }
 
 impl State {
@@ -19,6 +20,7 @@ impl State {
             _commit_desc: String::new(),
             _branch_name: String::new(),
             current_index: 0,
+            button_index: -1
         }
     }
 

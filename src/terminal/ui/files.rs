@@ -25,7 +25,7 @@ pub fn render_files_screen<B: Backend>(
         .constraints(files_layout.as_ref())
         .split(chunk);
 
-    let _buttons_chink = buttons::render_file_buttons(frame, files_chunk[0]);
+    let _buttons_chink = buttons::render_file_buttons(frame, files_chunk[0], state);
 
     let content_block = Block::default().padding(Padding::new(3, 3, 1, 1));
     let all_filenames = generate_modified_files_paragraph(content_block, state);
@@ -45,7 +45,7 @@ fn generate_modified_files_paragraph<'a>(block: Block<'a>, state: &'a State) -> 
                 false => Color::Red,
             });
             let mut preffix: String = String::from(
-                if i == state.current_index {
+                if state.current_index >= 0 && i == state.current_index as usize {
                     "> "
                 } else {
                     "  "
