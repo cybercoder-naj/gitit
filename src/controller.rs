@@ -2,9 +2,9 @@ pub mod state;
 
 use std::process::{Command, Stdio};
 use regex::Regex;
-use state::GitState;
+use state::State;
 
-pub fn init(state: &mut GitState) {
+pub fn init(state: &mut State) {
     let git_diff = Command::new("git")
         .arg("diff")
         .arg("--name-only")

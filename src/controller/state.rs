@@ -3,7 +3,7 @@ pub(crate) struct ModifiedFile {
     pub(crate) checked: bool
 }
 
-pub struct GitState {
+pub struct State {
     pub(crate) unstaged_files: Vec<ModifiedFile>,
     commit_msg: String,
     commit_desc: String,
@@ -11,7 +11,7 @@ pub struct GitState {
     pub(crate) current_index: u8,
 }
 
-impl GitState {
+impl State {
     pub fn new() -> Self {
         Self {
             unstaged_files: vec![],

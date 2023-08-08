@@ -11,9 +11,9 @@ use ratatui::{
     style::{Color, Style}
 };
 
-use crate::controller::state::GitState;
+use crate::controller::state::State;
 
-pub fn main<B: Backend>(frame: &mut Frame<B>, state: &mut GitState) {
+pub fn main<B: Backend>(frame: &mut Frame<B>, state: &mut State) {
     let layout = [
         Constraint::Percentage(100)
     ];
@@ -29,12 +29,12 @@ pub fn main<B: Backend>(frame: &mut Frame<B>, state: &mut GitState) {
         .borders(Borders::ALL)
         .padding(Padding::new(3, 3, 1, 1));
 
-    let paragragph = generate_modified_files_paragraph(main_window, state);
+    let paragraph = generate_modified_files_paragraph(main_window, state);
 
-    frame.render_widget(paragragph, chunks[0]);
+    frame.render_widget(paragraph, chunks[0]);
 }
 
-fn generate_modified_files_paragraph<'a>(block: Block<'a>, state: &'a GitState) -> Paragraph<'a> {
+fn generate_modified_files_paragraph<'a>(block: Block<'a>, state: &'a State) -> Paragraph<'a> {
     let text: Vec<_> = state
         .unstaged_files
         .iter()
