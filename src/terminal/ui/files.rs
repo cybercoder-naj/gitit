@@ -5,7 +5,7 @@ use std::rc::Rc;
 use ratatui::{
     backend::Backend,
     layout::*,
-    style::{Color, Style, Modifier},
+    style::{Color, Modifier, Style},
     text::{Line, Span},
     widgets::{Block, Padding, Paragraph},
     Frame,
@@ -13,21 +13,23 @@ use ratatui::{
 
 use crate::controller::state::State;
 
-pub fn render_files_screen<B: Backend>(frame: &mut Frame<B>, parent_chunk: Rect, state: &State) -> Rc<[Rect]> {
+pub fn render_files_screen<B: Backend>(
+    frame: &mut Frame<B>,
+    chunk: Rect,
+    state: &State,
+) -> Rc<[Rect]> {
     let files_layout = [Constraint::Percentage(10), Constraint::Percentage(90)];
     let files_chunk = Layout::default()
         .direction(Direction::Vertical)
         .margin(1)
         .constraints(files_layout.as_ref())
-        .split(parent_chunk);
-
-    let files_block = Block::default()
-        .padding(Padding::new(3, 3, 1, 1));
-
-    let files = generate_modified_files_paragraph(files_block, state);
+        .split(chunk);
 
     let _buttons_chink = buttons::render_file_buttons(frame, files_chunk[0]);
-    frame.render_widget(files, files_chunk[1]);
+
+    let content_block = Block::default().padding(Padding::new(3, 3, 1, 1));
+    let all_filenames = generate_modified_files_paragraph(content_block, state);
+    frame.render_widget(all_filenames, files_chunk[1]);
 
     files_chunk
 }
