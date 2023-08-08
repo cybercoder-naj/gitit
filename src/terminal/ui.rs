@@ -46,14 +46,14 @@ fn generate_modified_files_paragraph<'a>(block: Block<'a>, state: &'a State) -> 
             } else {
                 entry.push_str("  ");
             }
-            entry.push_str(match m_file.checked {
+            entry.push_str(match m_file.staged {
                 true => "[x] ",
                 false => "[ ] "
             });
             entry.push_str(m_file.filename.as_ref());
 
             let style = Style::default().fg(
-                match m_file.checked {
+                match m_file.staged {
                     true => Color::Green,
                     false => Color::Red
                 }
