@@ -4,7 +4,7 @@ pub(crate) struct ModifiedFile {
 }
 
 pub struct State {
-    pub(crate) unstaged_files: Vec<ModifiedFile>,
+    pub(crate) m_files: Vec<ModifiedFile>,
     _commit_msg: String,
     _commit_desc: String,
     _branch_name: String,
@@ -14,7 +14,7 @@ pub struct State {
 impl State {
     pub fn new() -> Self {
         Self {
-            unstaged_files: vec![],
+            m_files: vec![],
             _commit_msg: String::new(),
             _commit_desc: String::new(),
             _branch_name: String::new(),
@@ -23,7 +23,7 @@ impl State {
     }
 
     pub fn set_unstaged_files(&mut self, files: Vec<String>) {
-        self.unstaged_files = files
+        self.m_files = files
             .iter()
             .map(|name| {
                 let flags = &name[..1];

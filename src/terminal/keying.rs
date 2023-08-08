@@ -22,12 +22,16 @@ pub fn listen(state: &mut State) -> Result<bool, Box<dyn Error>> {
                     }
                 },
                 KeyCode::Down => {
-                    if state.current_index < state.unstaged_files.len() - 1 {
+                    if state.m_files.len() == 0 {
+                        return Ok(true);
+                    }
+
+                    if state.current_index < state.m_files.len() - 1 {
                         state.current_index += 1;
                     }
                 },
                 KeyCode::Char(' ') => {
-                    let m_file = &mut state.unstaged_files[state.current_index];
+                    let m_file = &mut state.m_files[state.current_index];
                     m_file.staged = !m_file.staged;
                 }
                 _ => {}

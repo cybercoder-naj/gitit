@@ -36,7 +36,7 @@ pub fn render_files_screen<B: Backend>(
 
 fn generate_modified_files_paragraph<'a>(block: Block<'a>, state: &'a State) -> Paragraph<'a> {
     let text: Vec<_> = state
-        .unstaged_files
+        .m_files
         .iter()
         .enumerate()
         .map(|(i, m_file)| {
@@ -44,24 +44,31 @@ fn generate_modified_files_paragraph<'a>(block: Block<'a>, state: &'a State) -> 
                 true => Color::Green,
                 false => Color::Red,
             });
+            let mut preffix: String = String::from(
+                if i == state.current_index {
+                    "> "
+                } else {
+                    "  "
+                }
+            );
 
-            let mut entry: String = String::new();
-            if i == state.current_index {
-                entry.push_str("> ");
-            } else {
-                entry.push_str("  ");
-            }
-            entry.push_str(match m_file.staged {
+            preffix.push_str(match m_file.staged {
                 true => "[x] ",
                 false => "[ ] ",
             });
-            entry.push_str(m_file.filename.as_ref());
 
             if m_file.filename.chars().last().unwrap() == '/' {
                 style = style.add_modifier(Modifier::BOLD);
             }
+            let mut spans = vec![Span::styled(preffix, style)];
 
-            Line::from(Span::styled(entry, style))
+            let filename = &m_file.filename[..];
+            if !m_file.staged {
+                style = style.add_modifier(Modifier::CROSSED_OUT);
+            }
+            spans.push(Span::styled(filename, style));
+
+            Line::from(spans)
         })
         .collect();
 
