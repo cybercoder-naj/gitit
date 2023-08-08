@@ -28,7 +28,7 @@ pub fn listen(state: &mut State) -> Result<bool, Box<dyn Error>> {
                 },
                 KeyCode::Char(' ') => {
                     let m_file = &mut state.unstaged_files[state.current_index];
-                    m_file.checked = !m_file.checked;
+                    m_file.staged = !m_file.staged;
                 }
                 _ => {}
             };
