@@ -45,7 +45,7 @@ fn generate_modified_files_paragraph<'a>(block: Block<'a>, state: &'a State) -> 
                 false => Color::Red,
             });
             let mut preffix: String = String::from(
-                if state.current_index >= 0 && i == state.current_index as usize {
+                if state.index >= 0 && i == state.index as usize {
                     "> "
                 } else {
                     "  "

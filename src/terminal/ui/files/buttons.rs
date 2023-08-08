@@ -5,10 +5,8 @@ use ratatui::{
     widgets::{Block, Paragraph},
     Frame,
 };
-use ratatui::prelude::Color;
-use ratatui::style::Style;
+use ratatui::style::{Color, Style};
 use crate::controller::state::State;
-use crate::utils::BTN_SELECT_ALL;
 
 pub fn render_file_buttons<B: Backend>(frame: &mut Frame<B>, chunk: Rect, state: &State) -> Rect {
     let buttons_layout = [Constraint::Percentage(100)];
@@ -23,7 +21,7 @@ pub fn render_file_buttons<B: Backend>(frame: &mut Frame<B>, chunk: Rect, state:
         vec![
             Span::styled(
                 "[ Select All ]",
-                if state.button_index == BTN_SELECT_ALL {
+                if state.button_index == 0 {
                     selected_style
                 } else {
                     Style::default()

@@ -1,3 +1,5 @@
+use crate::controller::index::Index;
+
 pub(crate) struct ModifiedFile {
     pub(crate) filename: String,
     pub(crate) staged: bool,
@@ -8,8 +10,7 @@ pub struct State {
     _commit_msg: String,
     _commit_desc: String,
     _branch_name: String,
-    pub(crate) current_index: isize,
-    pub(crate) button_index: isize
+    pub(crate) index: Index
 }
 
 impl State {
@@ -19,12 +20,11 @@ impl State {
             _commit_msg: String::new(),
             _commit_desc: String::new(),
             _branch_name: String::new(),
-            current_index: 0,
-            button_index: -1
+            index: Index::new()
         }
     }
 
-    pub fn set_unstaged_files(&mut self, files: Vec<String>) {
+    pub fn set_files(&mut self, files: Vec<String>) {
         self.m_files = files
             .iter()
             .map(|name| {
