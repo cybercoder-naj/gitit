@@ -5,7 +5,7 @@ use std::{
     io::{self, Stdout},
     time::Duration,
 };
-use std::os::linux::raw::stat;
+
 
 use crossterm::{
     event,
