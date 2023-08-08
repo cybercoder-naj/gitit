@@ -39,15 +39,25 @@ fn generate_modified_files_paragraph<'a>(block: Block<'a>, state: &'a State) -> 
         .unstaged_files
         .iter()
         .enumerate()
-        .map(|(i, s)| {
-            let mut new_str = String::from("[ ] ");
-            new_str.push_str(s.filename.as_ref());
+        .map(|(i, m_file)| {
+            let mut new_str = String::from(
+                match m_file.checked {
+                    true => "[x] ",
+                    false => "[ ] "
+                }
+            );
+            new_str.push_str(m_file.filename.as_ref());
 
-            (i, new_str)
+            (i, new_str, m_file)
         })
-        .map(|(i, s)| {
-            let mut style = Style::default().fg(Color::Red);
-            if i == usize::from(state.current_index) {
+        .map(|(i, s, m_file)| {
+            let mut style = Style::default().fg(
+                match m_file.checked {
+                    true => Color::Green,
+                    false => Color::Red
+                }
+            );
+            if i == state.current_index {
                 style = style.bg(Color::White);
             }
 

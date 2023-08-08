@@ -5,6 +5,7 @@ use std::{
     io::{self, Stdout},
     time::Duration,
 };
+use std::os::linux::raw::stat;
 
 use crossterm::{
     event,
@@ -47,9 +48,24 @@ pub fn run(terminal: &mut Terminal<CrosstermBackend<Stdout>>, state: &mut State)
         // To quit the terminal
         if event::poll(Duration::from_millis(250))? {
             if let Event::Key(key) = event::read()? {
-                if KeyCode::Char('q') == key.code {
-                    break;
-                }
+                match key.code {
+                    KeyCode::Char('q') => break,
+                    KeyCode::Up => {
+                        if state.current_index > 0 {
+                            state.current_index -= 1;
+                        }
+                    },
+                    KeyCode::Down => {
+                        if state.current_index < state.unstaged_files.len() {
+                            state.current_index += 1;
+                        }
+                    },
+                    KeyCode::Char(' ') => {
+                       let m_file = &mut state.unstaged_files[state.current_index];
+                        m_file.checked = !m_file.checked;
+                    }
+                    _ => {}
+                };
             }
         }
     })

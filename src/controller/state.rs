@@ -8,7 +8,7 @@ pub struct State {
     commit_msg: String,
     commit_desc: String,
     branch_name: String,
-    pub(crate) current_index: u8,
+    pub(crate) current_index: usize,
 }
 
 impl State {
