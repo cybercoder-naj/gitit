@@ -40,17 +40,14 @@ fn generate_modified_files_paragraph<'a>(block: Block<'a>, state: &'a State) -> 
         .iter()
         .enumerate()
         .map(|(i, m_file)| {
-            let mut new_str = String::from(
+            let mut entry = String::from(
                 match m_file.checked {
                     true => "[x] ",
                     false => "[ ] "
                 }
             );
-            new_str.push_str(m_file.filename.as_ref());
+            entry.push_str(m_file.filename.as_ref());
 
-            (i, new_str, m_file)
-        })
-        .map(|(i, s, m_file)| {
             let mut style = Style::default().fg(
                 match m_file.checked {
                     true => Color::Green,
@@ -61,8 +58,9 @@ fn generate_modified_files_paragraph<'a>(block: Block<'a>, state: &'a State) -> 
                 style = style.bg(Color::White);
             }
 
-            Line::from(Span::styled(s, style))
-        }).collect();
+            Line::from(Span::styled(entry, style))
+        })
+        .collect();
 
     Paragraph::new(text)
         .block(block)

@@ -1,15 +1,13 @@
 mod ui;
+mod keying;
 
 use std::{
     error::Error,
     io::{self, Stdout},
-    time::Duration,
 };
 
 
 use crossterm::{
-    event,
-    event::{Event, KeyCode},
     execute,
     terminal::{
         disable_raw_mode,
@@ -45,28 +43,8 @@ pub fn run(terminal: &mut Terminal<CrosstermBackend<Stdout>>, state: &mut State)
     Ok(loop {
         terminal.draw(|f| ui::main(f, state))?;
 
-        // To quit the terminal
-        if event::poll(Duration::from_millis(250))? {
-            if let Event::Key(key) = event::read()? {
-                match key.code {
-                    KeyCode::Char('q') => break,
-                    KeyCode::Up => {
-                        if state.current_index > 0 {
-                            state.current_index -= 1;
-                        }
-                    },
-                    KeyCode::Down => {
-                        if state.current_index < state.unstaged_files.len() {
-                            state.current_index += 1;
-                        }
-                    },
-                    KeyCode::Char(' ') => {
-                       let m_file = &mut state.unstaged_files[state.current_index];
-                        m_file.checked = !m_file.checked;
-                    }
-                    _ => {}
-                };
-            }
+        if !keying::listen(state)? {
+            break;
         }
     })
 }
