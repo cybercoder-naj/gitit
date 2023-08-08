@@ -18,7 +18,7 @@ use crossterm::{
 };
 
 use ratatui::{
-    backend::{CrosstermBackend},
+    backend::CrosstermBackend,
     Terminal,
 };
 

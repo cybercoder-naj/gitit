@@ -1,8 +1,16 @@
-use gitit;
+use gitit::{
+    controller::{init, state::State},
+    terminal
+};
 
 use std::error::Error;
 
-
 fn main() -> Result<(), Box<dyn Error>> {
-    Ok(gitit::start()?)
+    let mut state = State::new();
+    init(&mut state);
+
+    let mut terminal = terminal::setup_terminal()?;
+    terminal::run(&mut terminal, &mut state)?;
+    terminal::restore_terminal(&mut terminal)?;
+    Ok(())
 }
