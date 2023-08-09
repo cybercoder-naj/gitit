@@ -9,46 +9,30 @@ use crossterm::event::{
     KeyCode
 };
 
-use crate::controller::state::State;
-use crate::utils::{BTN_SECTION, BTN_SELECT_ALL, get_index_range};
+use crate::controller::{
+    state::State,
+    cursor::CursorAction
+};
 
 pub fn listen(state: &mut State) -> Result<bool, Box<dyn Error>> {
     if event::poll(Duration::from_millis(250))? {
-        let (min, max) = get_index_range(state);
-
         if let Event::Key(key) = event::read()? {
             match key.code {
                 KeyCode::Char('q') => return Ok(false),
                 KeyCode::Up => {
-                    if state.current_index > min {
-                        state.current_index -= 1;
-                    }
+                    state.do_cursor_action(CursorAction::Up);
                 },
                 KeyCode::Down => {
-                    if state.m_files.is_empty() {
-                        return Ok(true);
-                    }
-
-                    if state.current_index < max {
-                        state.current_index += 1;
-                    }
+                    state.do_cursor_action(CursorAction::Down)
                 },
                 KeyCode::Char(' ') => {
-                    if state.current_index < 0 {
-                        return Ok(true);
-                    }
-
-                    let m_file = &mut state.m_files[state.current_index as usize];
-                    m_file.staged = !m_file.staged;
+                    state.do_cursor_action(CursorAction::Select)
+                },
+                KeyCode::Enter => {
+                    state.do_cursor_action(CursorAction::Enter)
                 }
                 _ => {}
             };
-        }
-
-        if state.current_index == state.m_files.len() as isize {
-            state.button_index = BTN_SELECT_ALL;
-        } else {
-            state.button_index = -1;
         }
     }
 
