@@ -1,5 +1,5 @@
 pub mod state;
-pub(crate) mod index;
+pub mod cursor;
 
 use std::process::Command;
 use regex::Regex;

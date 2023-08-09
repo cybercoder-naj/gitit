@@ -4,8 +4,8 @@ use ratatui::{
     text::{Line, Span},
     widgets::{Block, Paragraph},
     Frame,
+    style::{Color, Style}
 };
-use ratatui::style::{Color, Style};
 use crate::controller::state::State;
 
 pub fn render_file_buttons<B: Backend>(frame: &mut Frame<B>, chunk: Rect, state: &State) -> Rect {

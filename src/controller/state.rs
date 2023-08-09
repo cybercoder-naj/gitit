@@ -1,16 +1,16 @@
-use crate::controller::index::Index;
+use crate::controller::cursor::{Button, Cursor, CursorAction, Section};
 
-pub(crate) struct ModifiedFile {
-    pub(crate) filename: String,
-    pub(crate) staged: bool,
+pub struct ModifiedFile {
+    pub filename: String,
+    pub staged: bool,
 }
 
 pub struct State {
-    pub(crate) m_files: Vec<ModifiedFile>,
+    pub m_files: Vec<ModifiedFile>,
     _commit_msg: String,
     _commit_desc: String,
     _branch_name: String,
-    pub(crate) index: Index
+    pub cursor: Cursor
 }
 
 impl State {
@@ -20,7 +20,7 @@ impl State {
             _commit_msg: String::new(),
             _commit_desc: String::new(),
             _branch_name: String::new(),
-            index: Index::new()
+            cursor: Cursor::new()
         }
     }
 
@@ -36,5 +36,53 @@ impl State {
                 }
             })
             .collect();
+
+        self.cursor.set_num_files(self.m_files.len());
+    }
+
+    pub fn do_cursor_action(&mut self, action: CursorAction) {
+        match action {
+            CursorAction::Up => {
+                if self.cursor.is_in(Section::Files) {
+                    self.cursor.try_dec_file_index().unwrap_or_else(|_| {
+                        // TODO make beep sound
+                    })
+                } else if self.cursor.is_in(Section::Buttons) {
+                    self.cursor.move_to(Section::Files);
+                }
+            }
+            CursorAction::Down => {
+                if self.cursor.is_in(Section::Files) {
+                    self.cursor.try_inc_file_index().unwrap_or_else(|_| {
+                        self.cursor.move_to(Section::Buttons);
+                    })
+                } else if self.cursor.is_in(Section::Buttons) {
+                    // TODO make beep sound
+                }
+            }
+            CursorAction::Left => {}
+            CursorAction::Right => {}
+            CursorAction::Select => {
+                if self.cursor.is_in(Section::Files) {
+                    let m_file = &mut self.m_files[self.cursor.get_file_index() as usize];
+                    m_file.staged = !m_file.staged;
+                } else {
+                    // TODO make a beep sound
+                }
+            }
+            CursorAction::Enter => {
+                if self.cursor.is_in(Section::Buttons) {
+                    match self.cursor.get_button() {
+                        Button::SelectAll => {
+                            for m_file in &mut self.m_files {
+                                m_file.staged = true
+                            }
+                        }
+                    }
+                } else {
+                    // TODO make a beep sound
+                }
+            }
+        }
     }
 }

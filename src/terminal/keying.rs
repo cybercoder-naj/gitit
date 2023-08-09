@@ -9,7 +9,10 @@ use crossterm::event::{
     KeyCode
 };
 
-use crate::controller::state::State;
+use crate::controller::{
+    state::State,
+    cursor::CursorAction
+};
 
 pub fn listen(state: &mut State) -> Result<bool, Box<dyn Error>> {
     if event::poll(Duration::from_millis(250))? {
@@ -17,26 +20,16 @@ pub fn listen(state: &mut State) -> Result<bool, Box<dyn Error>> {
             match key.code {
                 KeyCode::Char('q') => return Ok(false),
                 KeyCode::Up => {
-                    // if state.index >  {
-                    //     state.index -= 1;
-                    // }
+                    state.do_cursor_action(CursorAction::Up);
                 },
                 KeyCode::Down => {
-                    if state.m_files.is_empty() {
-                        return Ok(true);
-                    }
-
-                    // if state.index < max {
-                    //     state.index += 1;
-                    // }
+                    state.do_cursor_action(CursorAction::Down)
                 },
                 KeyCode::Char(' ') => {
-                    // if state.index < 0 {
-                    //     return Ok(true);
-                    // }
-
-                    // let m_file = &mut state.m_files[state.index as usize];
-                    // m_file.staged = !m_file.staged;
+                    state.do_cursor_action(CursorAction::Select)
+                },
+                KeyCode::Enter => {
+                    state.do_cursor_action(CursorAction::Enter)
                 }
                 _ => {}
             };
