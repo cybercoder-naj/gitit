@@ -10,6 +10,7 @@ use ratatui::{
     widgets::{Block, Padding, Paragraph},
     Frame,
 };
+use crate::controller::cursor::Section;
 
 use crate::controller::state::State;
 
@@ -45,11 +46,11 @@ fn generate_modified_files_paragraph<'a>(block: Block<'a>, state: &'a State) -> 
                 false => Color::Red,
             });
             let mut preffix: String = String::from(
-                // if state.index >= 0 && i == state.index as usize {
-                //     "> "
-                // } else {
+                if state.cursor.is_in(Section::Files) && state.cursor.get_file_index() as usize == i {
+                    "> "
+                } else {
                     "  "
-                // }
+                }
             );
 
             preffix.push_str(match m_file.staged {

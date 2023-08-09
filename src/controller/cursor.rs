@@ -3,6 +3,7 @@ pub enum Section {
     Files, Buttons
 }
 
+#[derive(PartialEq)]
 pub enum Button {
     SelectAll
 }
@@ -46,7 +47,7 @@ impl Cursor {
     }
 
     pub fn try_inc_file_index(&mut self) -> Result<(), ()> {
-        if self.file_index as usize >= self.num_files.expect("Did not set num_files.") {
+        if self.file_index as usize >= self.num_files.expect("Did not set num_files.") - 1 {
             return Err(());
         }
 
@@ -63,6 +64,6 @@ impl Cursor {
     }
 
     pub fn move_to(&mut self, section: Section) {
-
+        self.section = section;
     }
 }
