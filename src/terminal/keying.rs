@@ -45,7 +45,7 @@ pub fn listen(state: &mut State) -> Result<bool, Box<dyn Error>> {
             };
         }
 
-        if state.current_index == BTN_SECTION {
+        if state.current_index == state.m_files.len() as isize {
             state.button_index = BTN_SELECT_ALL;
         } else {
             state.button_index = -1;

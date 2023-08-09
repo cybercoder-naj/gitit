@@ -18,18 +18,18 @@ pub fn render_files_screen<B: Backend>(
     chunk: Rect,
     state: &State,
 ) -> Rc<[Rect]> {
-    let files_layout = [Constraint::Percentage(10), Constraint::Percentage(90)];
+    let files_layout = [Constraint::Percentage(90), Constraint::Percentage(10)];
     let files_chunk = Layout::default()
         .direction(Direction::Vertical)
         .margin(1)
         .constraints(files_layout.as_ref())
         .split(chunk);
 
-    let _buttons_chink = buttons::render_file_buttons(frame, files_chunk[0], state);
-
     let content_block = Block::default().padding(Padding::new(3, 3, 1, 1));
     let all_filenames = generate_modified_files_paragraph(content_block, state);
-    frame.render_widget(all_filenames, files_chunk[1]);
+    frame.render_widget(all_filenames, files_chunk[0]);
+
+    let _buttons_chink = buttons::render_file_buttons(frame, files_chunk[1], state);
 
     files_chunk
 }
