@@ -15,7 +15,7 @@ fn retrieve_files_from_git() -> Vec<String> {
         .arg("status")
         .arg("-s")
         .output()
-        .expect("Git Diff didn't work");
+        .expect("Git Status didn't work");
 
     let delim = Regex::new(r"[\n\r]").expect("Invalid Regex");
     let output = String::from_utf8_lossy(&git_files.stdout);

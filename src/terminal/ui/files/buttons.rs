@@ -21,11 +21,11 @@ pub fn render_file_buttons<B: Backend>(frame: &mut Frame<B>, chunk: Rect, state:
         vec![
             Span::styled(
                 "[ Select All ]",
-                if state.button_index == 0 {
-                    selected_style
-                } else {
+                // if state.index == 0 {
+                //     selected_style
+                // } else {
                     Style::default()
-                }
+                // }
             )
         ]
     );

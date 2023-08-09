@@ -45,11 +45,11 @@ fn generate_modified_files_paragraph<'a>(block: Block<'a>, state: &'a State) -> 
                 false => Color::Red,
             });
             let mut preffix: String = String::from(
-                if state.index >= 0 && i == state.index as usize {
-                    "> "
-                } else {
+                // if state.index >= 0 && i == state.index as usize {
+                //     "> "
+                // } else {
                     "  "
-                }
+                // }
             );
 
             preffix.push_str(match m_file.staged {
