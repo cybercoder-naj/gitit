@@ -1,5 +1,6 @@
 mod terminal;
 mod controller;
+mod utils;
 
 use std::error::Error;
 use controller::{state::State, init};
