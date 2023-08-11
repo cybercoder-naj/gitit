@@ -12,6 +12,10 @@ pub enum CursorAction {
     Up, Down, Left, Right, Select, Enter
 }
 
+pub enum CursorError {
+    OutOfBounds, NoFileExists
+}
+
 pub struct Cursor {
     section: Section,
     button: Button,
@@ -37,18 +41,23 @@ impl Cursor {
         self.num_files = Some(num_files);
     }
 
-    pub fn try_dec_file_index(&mut self) -> Result<(), ()> {
+    pub fn try_dec_file_index(&mut self) -> Result<(), CursorError> {
         if self.file_index <= 0 {
-            return Err(());
+            return Err(CursorError::OutOfBounds)
         }
 
         self.file_index -= 1;
         Ok(())
     }
 
-    pub fn try_inc_file_index(&mut self) -> Result<(), ()> {
-        if self.file_index as usize >= self.num_files.expect("Did not set num_files.") - 1 {
-            return Err(());
+    pub fn try_inc_file_index(&mut self) -> Result<(), CursorError> {
+        let num_files = self.num_files.expect("Did not set num_files");
+        if num_files == 0 {
+            return Err(CursorError::NoFileExists);
+        }
+
+        if self.file_index as usize >= num_files - 1 {
+            return Err(CursorError::OutOfBounds);
         }
 
         self.file_index += 1;

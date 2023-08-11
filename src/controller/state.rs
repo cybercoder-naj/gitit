@@ -1,4 +1,4 @@
-use crate::controller::cursor::{Button, Cursor, CursorAction, Section};
+use crate::controller::cursor::{Button, Cursor, CursorAction, CursorError, Section};
 
 pub struct ModifiedFile {
     pub filename: String,
@@ -53,8 +53,13 @@ impl State {
             }
             CursorAction::Down => {
                 if self.cursor.is_in(Section::Files) {
-                    self.cursor.try_inc_file_index().unwrap_or_else(|_| {
-                        self.cursor.move_to(Section::Buttons);
+                    self.cursor.try_inc_file_index().unwrap_or_else(|e| {
+                        match e {
+                            CursorError::OutOfBounds => {
+                                self.cursor.move_to(Section::Buttons);
+                            }
+                            CursorError::NoFileExists => {}
+                        }
                     })
                 } else if self.cursor.is_in(Section::Buttons) {
                     // TODO make beep sound
