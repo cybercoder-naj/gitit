@@ -40,6 +40,10 @@ impl State {
         self.cursor.set_num_files(self.m_files.len());
     }
 
+    pub fn get_current_file(&self) -> &ModifiedFile {
+        &self.m_files[self.cursor.get_file_index() as usize]
+    }
+
     pub fn do_cursor_action(&mut self, action: CursorAction) {
         match action {
             CursorAction::Up => {
