@@ -1,9 +1,9 @@
-pub mod state;
 pub mod cursor;
+pub mod state;
 
-use std::process::Command;
 use regex::Regex;
 use state::State;
+use std::process::Command;
 
 use self::state::ModifiedFile;
 

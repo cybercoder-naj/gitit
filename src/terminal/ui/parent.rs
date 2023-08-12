@@ -1,10 +1,10 @@
+use crate::controller::state::State;
 use ratatui::{
     backend::Backend,
     layout::Rect,
     widgets::{Block, Borders, Padding},
     Frame,
 };
-use crate::controller::state::State;
 
 pub fn render_parent_block<B: Backend>(frame: &mut Frame<B>, chunk: Rect, _state: &State) -> Rect {
     let main_window = Block::default()

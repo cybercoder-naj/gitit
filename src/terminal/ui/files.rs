@@ -1,22 +1,18 @@
 mod buttons;
 
+use crate::controller::cursor::Section;
 use ratatui::{
     backend::Backend,
     layout::*,
     style::{Color, Modifier, Style},
     text::{Line, Span},
-    widgets::{Block, Paragraph, Borders, Padding},
+    widgets::{Block, Borders, Padding, Paragraph},
     Frame,
 };
-use crate::controller::cursor::Section;
 
 use crate::controller::state::State;
 
-pub fn render<B: Backend>(
-    frame: &mut Frame<B>,
-    area: Rect,
-    state: &State,
-) {
+pub fn render<B: Backend>(frame: &mut Frame<B>, area: Rect, state: &State) {
     let constraints = [Constraint::Percentage(90), Constraint::Percentage(10)];
     let layout = Layout::default()
         .direction(Direction::Vertical)
@@ -45,11 +41,12 @@ fn generate_modified_files_paragraph<'a>(block: Block<'a>, state: &'a State) -> 
                 false => Color::Red,
             });
             let mut preffix: String = String::from(
-                if state.cursor.is_in(Section::Files) && state.cursor.get_file_index() as usize == i {
+                if state.cursor.is_in(Section::Files) && state.cursor.get_file_index() as usize == i
+                {
                     "> "
                 } else {
                     "  "
-                }
+                },
             );
 
             preffix.push_str(match m_file.staged {

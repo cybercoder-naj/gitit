@@ -1,11 +1,11 @@
-mod files;
 mod diffs;
+mod files;
 
 use ratatui::{
-    backend::Backend, 
-    Frame,
+    backend::Backend,
+    layout::{Constraint, Direction, Layout},
     widgets::{Block, Borders, Padding},
-    layout::{Layout, Constraint, Direction}
+    Frame,
 };
 
 use crate::controller::state::State;
