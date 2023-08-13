@@ -75,7 +75,9 @@ pub fn generate_git_paragaph<'a>(block: Block<'a>, state: &'a State) -> Paragrap
                 )));
             }
 
-            Paragraph::new(text).block(block)
+            Paragraph::new(text)
+                .block(block)
+                // .scroll()
         }
     }
 }

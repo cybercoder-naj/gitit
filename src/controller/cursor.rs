@@ -20,7 +20,8 @@ pub struct Cursor {
     section: Section,
     button: Button,
     file_index: u8,
-    num_files: Option<usize>
+    num_files: Option<usize>,
+    diff_scroll_offset: (u16, u16)
 }
 
 impl Cursor {
@@ -29,7 +30,8 @@ impl Cursor {
             section: Section::Files,
             button: Button::SelectAll,
             file_index: 0,
-            num_files: None
+            num_files: None,
+            diff_scroll_offset: (0, 0)
         }
     }
 
@@ -74,5 +76,17 @@ impl Cursor {
 
     pub fn move_to(&mut self, section: Section) {
         self.section = section;
+    }
+
+    pub fn reset_diff_scroll(&mut self) {
+        self.diff_scroll_offset = (0, 0)
+    }
+
+    pub fn diff_scroll_up(&mut self) {
+        self.diff_scroll_offset = (self.diff_scroll_offset.0 + 1, self.diff_scroll_offset.1)
+    }
+
+    pub fn diff_scroll_down(&mut self) {
+        self.diff_scroll_offset = (self.diff_scroll_offset.0 - 1, self.diff_scroll_offset.1)
     }
 }
