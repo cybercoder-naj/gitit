@@ -1,3 +1,5 @@
+use crate::controller;
+
 pub struct ModifiedFile {
     filename: String,
     staged: bool,
@@ -20,14 +22,27 @@ impl ModifiedFile {
     }
 
     pub fn set_staged(&mut self) {
-        self.staged = true;
+        match controller::stage_file(self) {
+            true => self.staged = true,
+            false => {
+                panic!("something went horribly wrong");
+            }
+        }
     }
 
     pub fn unset_staged(&mut self) {
-        self.staged = false;
+        match controller::restore_file(self) {
+            true => self.staged = false,
+            false => {
+                panic!("something went horribly wrong");
+            }
+        }
     }
 
     pub fn toggle_staged(&mut self) {
-        self.staged = !self.staged;
+        match self.staged {
+            true => self.unset_staged(),
+            false => self.set_staged()
+        }
     }
 }
