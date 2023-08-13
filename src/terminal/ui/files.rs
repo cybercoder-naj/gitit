@@ -36,7 +36,7 @@ fn generate_modified_files_paragraph<'a>(block: Block<'a>, state: &'a State) -> 
         .iter()
         .enumerate()
         .map(|(i, m_file)| {
-            let mut style = Style::default().fg(match m_file.staged {
+            let mut style = Style::default().fg(match m_file.is_staged() {
                 true => Color::Green,
                 false => Color::Red,
             });
@@ -49,18 +49,18 @@ fn generate_modified_files_paragraph<'a>(block: Block<'a>, state: &'a State) -> 
                 },
             );
 
-            preffix.push_str(match m_file.staged {
+            preffix.push_str(match m_file.is_staged() {
                 true => "[x] ",
                 false => "[ ] ",
             });
 
-            if m_file.filename.chars().last().unwrap() == '/' {
+            if m_file.name().chars().last().unwrap() == '/' {
                 style = style.add_modifier(Modifier::BOLD);
             }
             let mut spans = vec![Span::styled(preffix, style)];
 
-            let filename = &m_file.filename[..];
-            if !m_file.staged {
+            let filename = m_file.name();
+            if !m_file.is_staged() {
                 style = style.add_modifier(Modifier::CROSSED_OUT);
             }
             spans.push(Span::styled(filename, style));

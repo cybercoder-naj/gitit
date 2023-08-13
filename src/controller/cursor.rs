@@ -1,19 +1,26 @@
 #[derive(PartialEq)]
 pub enum Section {
-    Files, Buttons
+    Files,
+    Buttons,
 }
 
 #[derive(PartialEq)]
 pub enum Button {
-    SelectAll
+    SelectAll,
 }
 
 pub enum CursorAction {
-    Up, Down, Left, Right, Select, Enter
+    Up,
+    Down,
+    Left,
+    Right,
+    Select,
+    Enter,
 }
 
 pub enum CursorError {
-    OutOfBounds, NoFileExists
+    OutOfBounds,
+    NoFileExists,
 }
 
 pub struct Cursor {
@@ -21,7 +28,7 @@ pub struct Cursor {
     button: Button,
     file_index: u8,
     num_files: Option<usize>,
-    diff_scroll_offset: (u16, u16)
+    diff_scroll_offset: (u16, u16),
 }
 
 impl Cursor {
@@ -31,7 +38,7 @@ impl Cursor {
             button: Button::SelectAll,
             file_index: 0,
             num_files: None,
-            diff_scroll_offset: (0, 0)
+            diff_scroll_offset: (0, 0),
         }
     }
 
@@ -45,7 +52,7 @@ impl Cursor {
 
     pub fn try_dec_file_index(&mut self) -> Result<(), CursorError> {
         if self.file_index <= 0 {
-            return Err(CursorError::OutOfBounds)
+            return Err(CursorError::OutOfBounds);
         }
 
         self.file_index -= 1;

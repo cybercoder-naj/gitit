@@ -1,11 +1,12 @@
 pub mod cursor;
+pub mod models;
 pub mod state;
 
 use regex::Regex;
 use state::State;
 use std::process::Command;
 
-use self::state::ModifiedFile;
+use self::models::ModifiedFile;
 
 pub fn init(state: &mut State) {
     let raw_files = retrieve_files_from_git();
@@ -33,12 +34,12 @@ pub fn get_diff_string(m_file: &ModifiedFile) -> String {
     let mut cmd = Command::new("git");
 
     cmd.arg("diff");
-    if m_file.staged {
+    if m_file.is_staged() {
         cmd.arg("--staged");
     }
 
     let output = cmd
-        .arg(m_file.filename.clone())
+        .arg(m_file.name().clone())
         .output()
         .expect("Git diff didn't work");
 
