@@ -1,26 +1,34 @@
 #[derive(PartialEq)]
 pub enum Section {
-    Files, Buttons
+    Files,
+    Buttons,
 }
 
 #[derive(PartialEq)]
 pub enum Button {
-    SelectAll
+    SelectAll,
 }
 
 pub enum CursorAction {
-    Up, Down, Left, Right, Select, Enter
+    Up,
+    Down,
+    Left,
+    Right,
+    Select,
+    Enter,
 }
 
 pub enum CursorError {
-    OutOfBounds, NoFileExists
+    OutOfBounds,
+    NoFileExists,
 }
 
 pub struct Cursor {
     section: Section,
     button: Button,
     file_index: u8,
-    num_files: Option<usize>
+    num_files: Option<usize>,
+    diff_scroll_offset: (u16, u16),
 }
 
 impl Cursor {
@@ -29,7 +37,8 @@ impl Cursor {
             section: Section::Files,
             button: Button::SelectAll,
             file_index: 0,
-            num_files: None
+            num_files: None,
+            diff_scroll_offset: (0, 0),
         }
     }
 
@@ -43,7 +52,7 @@ impl Cursor {
 
     pub fn try_dec_file_index(&mut self) -> Result<(), CursorError> {
         if self.file_index <= 0 {
-            return Err(CursorError::OutOfBounds)
+            return Err(CursorError::OutOfBounds);
         }
 
         self.file_index -= 1;
@@ -74,5 +83,21 @@ impl Cursor {
 
     pub fn move_to(&mut self, section: Section) {
         self.section = section;
+    }
+
+    pub fn reset_diff_scroll(&mut self) {
+        self.diff_scroll_offset = (0, 0)
+    }
+
+    pub fn diff_scroll_up(&mut self) {
+        self.diff_scroll_offset = (self.diff_scroll_offset.0 + 1, self.diff_scroll_offset.1)
+    }
+
+    pub fn diff_scroll_down(&mut self) {
+        self.diff_scroll_offset = (self.diff_scroll_offset.0 - 1, self.diff_scroll_offset.1)
+    }
+    
+    pub fn get_diff_scroll(&self) -> (u16, u16) {
+        self.diff_scroll_offset
     }
 }

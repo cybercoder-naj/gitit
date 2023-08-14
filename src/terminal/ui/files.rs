@@ -1,38 +1,33 @@
 mod buttons;
 
-use std::rc::Rc;
-
+use crate::controller::cursor::Section;
 use ratatui::{
     backend::Backend,
     layout::*,
     style::{Color, Modifier, Style},
     text::{Line, Span},
-    widgets::{Block, Padding, Paragraph},
+    widgets::{Block, Borders, Padding, Paragraph},
     Frame,
 };
-use crate::controller::cursor::Section;
 
 use crate::controller::state::State;
 
-pub fn render_files_screen<B: Backend>(
-    frame: &mut Frame<B>,
-    chunk: Rect,
-    state: &State,
-) -> Rc<[Rect]> {
-    let files_layout = [Constraint::Percentage(90), Constraint::Percentage(10)];
-    let files_chunk = Layout::default()
+pub fn render<B: Backend>(frame: &mut Frame<B>, area: Rect, state: &State) {
+    let constraints = [Constraint::Percentage(90), Constraint::Percentage(10)];
+    let layout = Layout::default()
         .direction(Direction::Vertical)
-        .margin(1)
-        .constraints(files_layout.as_ref())
-        .split(chunk);
+        .constraints(constraints.as_ref())
+        .split(area);
 
-    let content_block = Block::default().padding(Padding::new(3, 3, 1, 1));
+    let content_block = Block::default()
+        .title("Files")
+        .padding(Padding::uniform(1))
+        .borders(Borders::TOP | Borders::LEFT | Borders::RIGHT);
+
     let all_filenames = generate_modified_files_paragraph(content_block, state);
-    frame.render_widget(all_filenames, files_chunk[0]);
+    frame.render_widget(all_filenames, layout[0]);
 
-    let _buttons_chink = buttons::render_file_buttons(frame, files_chunk[1], state);
-
-    files_chunk
+    buttons::render(frame, layout[1], state);
 }
 
 fn generate_modified_files_paragraph<'a>(block: Block<'a>, state: &'a State) -> Paragraph<'a> {
@@ -41,30 +36,31 @@ fn generate_modified_files_paragraph<'a>(block: Block<'a>, state: &'a State) -> 
         .iter()
         .enumerate()
         .map(|(i, m_file)| {
-            let mut style = Style::default().fg(match m_file.staged {
+            let mut style = Style::default().fg(match m_file.is_staged() {
                 true => Color::Green,
                 false => Color::Red,
             });
             let mut preffix: String = String::from(
-                if state.cursor.is_in(Section::Files) && state.cursor.get_file_index() as usize == i {
+                if state.cursor.is_in(Section::Files) && state.cursor.get_file_index() as usize == i
+                {
                     "> "
                 } else {
                     "  "
-                }
+                },
             );
 
-            preffix.push_str(match m_file.staged {
+            preffix.push_str(match m_file.is_staged() {
                 true => "[x] ",
                 false => "[ ] ",
             });
 
-            if m_file.filename.chars().last().unwrap() == '/' {
+            if m_file.name().chars().last().unwrap() == '/' {
                 style = style.add_modifier(Modifier::BOLD);
             }
             let mut spans = vec![Span::styled(preffix, style)];
 
-            let filename = &m_file.filename[..];
-            if !m_file.staged {
+            let filename = m_file.name();
+            if !m_file.is_staged() {
                 style = style.add_modifier(Modifier::CROSSED_OUT);
             }
             spans.push(Span::styled(filename, style));
