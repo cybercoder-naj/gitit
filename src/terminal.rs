@@ -20,6 +20,7 @@ use ratatui::{
     backend::CrosstermBackend,
     Terminal,
 };
+use crate::cache::Cache;
 
 use crate::controller::state::State;
 
@@ -38,9 +39,9 @@ pub fn restore_terminal(
     Ok(terminal.show_cursor()?)
 }
 
-pub fn run(terminal: &mut Terminal<CrosstermBackend<Stdout>>, state: &mut State) -> Result<(), Box<dyn Error>> {
+pub fn run(terminal: &mut Terminal<CrosstermBackend<Stdout>>, state: &mut State, cache: &mut Cache) -> Result<(), Box<dyn Error>> {
     Ok(loop {
-        terminal.draw(|f| ui::main(f, state))?;
+        terminal.draw(|f| ui::main(f, state, cache))?;
 
         if !keying::listen(state)? {
             break;

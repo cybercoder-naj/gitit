@@ -47,24 +47,24 @@ pub fn get_diff_string(m_file: &ModifiedFile) -> String {
 }
 
 pub fn stage_file(m_file: &ModifiedFile) -> bool {
-    let add = Command::new("git")
+    let _add = Command::new("git")
         .arg("add")
         .arg(m_file.name())
         .output()
         .expect("git add didn't work");
 
-    // check exit status of output
+    // TODO check exit status of output
     true
 }
 
 pub fn restore_file(m_file: &ModifiedFile) -> bool {
-    let restore = Command::new("git")
+    let _restore = Command::new("git")
         .arg("restore")
         .arg("--staged")
         .arg(m_file.name())
         .output()
         .expect("git restore didn't work");
 
-    // check exit status of output
+    // TODO check exit status of output
     true
 }

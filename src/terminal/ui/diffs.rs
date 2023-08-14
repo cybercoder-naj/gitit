@@ -6,11 +6,12 @@ use ratatui::{
     text::{Line, Span},
     widgets::{Block, Borders, Padding, Paragraph},
 };
+use crate::cache::Cache;
 
 use crate::controller::{self, state::State};
 use crate::controller::cursor::Section;
 
-pub fn render<B: Backend>(frame: &mut Frame<B>, area: Rect, state: &State) {
+pub fn render<B: Backend>(frame: &mut Frame<B>, area: Rect, state: &State, cache: &mut Cache) {
     let block = Block::default()
         .borders(Borders::ALL)
         .border_style(
@@ -22,15 +23,15 @@ pub fn render<B: Backend>(frame: &mut Frame<B>, area: Rect, state: &State) {
         .padding(Padding::uniform(1))
         .title("Changes");
 
-    let paragraph = generate_git_paragaph(block, state);
+    let paragraph = generate_git_paragaph(block, state, cache);
 
     frame.render_widget(paragraph, area);
 }
 
-pub fn generate_git_paragaph<'a>(block: Block<'a>, state: &'a State) -> Paragraph<'a> {
+pub fn generate_git_paragaph<'a>(block: Block<'a>, state: &'a State, cache: &'a mut Cache) -> Paragraph<'a> {
     let m_file = state.get_current_file();
     if state.cursor.is_in(Section::Files) || state.cursor.is_in(Section::Diff) {
-        let binding = controller::get_diff_string(m_file);
+        let binding = cache.get_diff_string(m_file);
         let diff = binding.lines();
         let mut text: Vec<Line> = vec![];
 

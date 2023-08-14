@@ -7,10 +7,11 @@ use ratatui::{
     widgets::{Block, Borders, Padding},
     Frame,
 };
+use crate::cache::Cache;
 
 use crate::controller::state::State;
 
-pub fn main<B: Backend>(frame: &mut Frame<B>, state: &mut State) {
+pub fn main<B: Backend>(frame: &mut Frame<B>, state: &mut State, cache: &mut Cache) {
     let parent_block = Block::default()
         .title("Gitit")
         .borders(Borders::ALL)
@@ -25,5 +26,5 @@ pub fn main<B: Backend>(frame: &mut Frame<B>, state: &mut State) {
         .split(frame.size());
 
     files::render(frame, window_layout[0], state);
-    diffs::render(frame, window_layout[1], state);
+    diffs::render(frame, window_layout[1], state, cache);
 }
