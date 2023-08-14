@@ -11,6 +11,8 @@ pub fn listen(state: &mut State) -> Result<bool, Box<dyn Error>> {
                 KeyCode::Char('q') => return Ok(false),
                 KeyCode::Up => state.do_cursor_action(CursorAction::Up),
                 KeyCode::Down => state.do_cursor_action(CursorAction::Down),
+                KeyCode::Left => state.do_cursor_action(CursorAction::Left),
+                KeyCode::Right => state.do_cursor_action(CursorAction::Right),
                 KeyCode::Char(' ') => state.do_cursor_action(CursorAction::Select),
                 KeyCode::Enter => state.do_cursor_action(CursorAction::Enter),
                 _ => {}

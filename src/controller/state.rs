@@ -36,12 +36,8 @@ impl State {
         self.cursor.set_num_files(self.m_files.len());
     }
 
-    pub fn get_current_file(&self) -> Option<&ModifiedFile> {
-        if !self.cursor.is_in(Section::Files) {
-            None
-        } else {
-            Some(&self.m_files[self.cursor.get_file_index() as usize])
-        }
+    pub fn get_current_file(&self) -> &ModifiedFile {
+        &self.m_files[self.cursor.get_file_index() as usize]
     }
 
     pub fn do_cursor_action(&mut self, action: CursorAction) {
@@ -50,9 +46,13 @@ impl State {
                 if self.cursor.is_in(Section::Files) {
                     self.cursor.try_dec_file_index().unwrap_or_else(|_| {
                         // TODO make beep sound
-                    })
+                    });
+                    self.cursor.reset_diff_scroll()
                 } else if self.cursor.is_in(Section::Buttons) {
                     self.cursor.move_to(Section::Files);
+                    self.cursor.reset_diff_scroll()
+                } else if self.cursor.is_in(Section::Diff) {
+                    self.cursor.diff_scroll_up();
                 }
             }
             CursorAction::Down => {
@@ -64,13 +64,29 @@ impl State {
                                 self.cursor.move_to(Section::Buttons);
                             }
                             CursorError::NoFileExists => {}
-                        })
+                        });
+                    self.cursor.reset_diff_scroll()
                 } else if self.cursor.is_in(Section::Buttons) {
+                    // TODO make beep sound
+                    self.cursor.reset_diff_scroll()
+                } else if self.cursor.is_in(Section::Diff) {
+                    self.cursor.diff_scroll_down();
+                }
+            }
+            CursorAction::Left => {
+                if self.cursor.is_in(Section::Diff) {
+                    self.cursor.move_to(Section::Files)
+                } else {
                     // TODO make beep sound
                 }
             }
-            CursorAction::Left => {}
-            CursorAction::Right => {}
+            CursorAction::Right => {
+                if self.cursor.is_in(Section::Files) || self.cursor.is_in(Section::Buttons) {
+                    self.cursor.move_to(Section::Diff)
+                } else {
+                    // TODO make beep sound
+                }
+            }
             CursorAction::Select => {
                 if self.cursor.is_in(Section::Files) {
                     let m_file = &mut self.m_files[self.cursor.get_file_index() as usize];

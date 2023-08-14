@@ -2,6 +2,7 @@
 pub enum Section {
     Files,
     Buttons,
+    Diff
 }
 
 #[derive(PartialEq)]
@@ -90,11 +91,14 @@ impl Cursor {
     }
 
     pub fn diff_scroll_up(&mut self) {
-        self.diff_scroll_offset = (self.diff_scroll_offset.0 + 1, self.diff_scroll_offset.1)
+        if self.diff_scroll_offset.0 == 0 {
+            return;
+        }
+        self.diff_scroll_offset = (self.diff_scroll_offset.0 - 1, self.diff_scroll_offset.1)
     }
 
     pub fn diff_scroll_down(&mut self) {
-        self.diff_scroll_offset = (self.diff_scroll_offset.0 - 1, self.diff_scroll_offset.1)
+        self.diff_scroll_offset = (self.diff_scroll_offset.0 + 1, self.diff_scroll_offset.1)
     }
     
     pub fn get_diff_scroll(&self) -> (u16, u16) {
