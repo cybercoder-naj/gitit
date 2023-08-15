@@ -9,12 +9,11 @@ pub fn listen(state: &mut State) -> Result<bool, Box<dyn Error>> {
         if let Event::Key(key) = event::read()? {
             match key.code {
                 KeyCode::Char('q') => return Ok(false),
-                KeyCode::Up => state.do_cursor_action(CursorAction::Up),
-                KeyCode::Down => state.do_cursor_action(CursorAction::Down),
-                KeyCode::Left => state.do_cursor_action(CursorAction::Left),
-                KeyCode::Right => state.do_cursor_action(CursorAction::Right),
+                KeyCode::Char('k') => state.do_cursor_action(CursorAction::Up),
+                KeyCode::Char('j') => state.do_cursor_action(CursorAction::Down),
+                KeyCode::Char('H') => state.do_cursor_action(CursorAction::SuperLeft),
+                KeyCode::Char('L') => state.do_cursor_action(CursorAction::SuperRight),
                 KeyCode::Char(' ') => state.do_cursor_action(CursorAction::Select),
-                KeyCode::Enter => state.do_cursor_action(CursorAction::Enter),
                 _ => {}
             };
         }

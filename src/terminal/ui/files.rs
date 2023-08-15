@@ -1,5 +1,3 @@
-mod buttons;
-
 use crate::controller::cursor::Section;
 use ratatui::{
     backend::Backend,
@@ -11,28 +9,27 @@ use ratatui::{
 };
 
 use crate::controller::state::State;
+use crate::terminal::ui::Render;
 
-pub fn render<B: Backend>(frame: &mut Frame<B>, area: Rect, state: &State) {
-    let constraints = [Constraint::Percentage(90), Constraint::Percentage(10)];
-    let layout = Layout::default()
-        .direction(Direction::Vertical)
-        .constraints(constraints.as_ref())
-        .split(area);
+pub struct Files;
 
-    let content_block = Block::default()
-        .title("Files")
-        .padding(Padding::uniform(1))
-        .borders(Borders::TOP | Borders::LEFT | Borders::RIGHT);
+impl Render for Files {
+    fn render<B: Backend>(frame: &mut Frame<B>, area: Rect, state: &mut State) {
+        let content_block = Block::default()
+            .title("Files")
+            .padding(Padding::uniform(1))
+            .borders(Borders::ALL);
 
-    let all_filenames = generate_modified_files_paragraph(content_block, state);
-    frame.render_widget(all_filenames, layout[0]);
+        let all_filenames = generate_modified_files_paragraph(content_block, state);
+        frame.render_widget(all_filenames, area);
+    }
 
-    buttons::render(frame, layout[1], state);
 }
 
-fn generate_modified_files_paragraph<'a>(block: Block<'a>, state: &'a State) -> Paragraph<'a> {
-    let text: Vec<_> = state
-        .m_files
+fn generate_modified_files_paragraph<'a>(block: Block<'a>, state: &'a mut State) -> Paragraph<'a> {
+    let m_files = state.get_files();
+
+    let text: Vec<_> = m_files
         .iter()
         .enumerate()
         .map(|(i, m_file)| {
@@ -40,8 +37,8 @@ fn generate_modified_files_paragraph<'a>(block: Block<'a>, state: &'a State) -> 
                 true => Color::Green,
                 false => Color::Red,
             });
-            let mut preffix: String = String::from(
-                if state.cursor.is_in(Section::Files) && state.cursor.get_file_index() as usize == i
+            let mut prefix: String = String::from(
+                if state.cursor().is_in(&Section::Files) && state.cursor().get_file_index() == i
                 {
                     "> "
                 } else {
@@ -49,7 +46,7 @@ fn generate_modified_files_paragraph<'a>(block: Block<'a>, state: &'a State) -> 
                 },
             );
 
-            preffix.push_str(match m_file.is_staged() {
+            prefix.push_str(match m_file.is_staged() {
                 true => "[x] ",
                 false => "[ ] ",
             });
@@ -57,7 +54,7 @@ fn generate_modified_files_paragraph<'a>(block: Block<'a>, state: &'a State) -> 
             if m_file.name().chars().last().unwrap() == '/' {
                 style = style.add_modifier(Modifier::BOLD);
             }
-            let mut spans = vec![Span::styled(preffix, style)];
+            let mut spans = vec![Span::styled(prefix, style)];
 
             let filename = m_file.name();
             if !m_file.is_staged() {

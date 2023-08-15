@@ -4,12 +4,17 @@ use ratatui::{
     layout::{Constraint, Direction, Layout},
     widgets::{Block, Borders, Padding},
 };
+use ratatui::layout::Rect;
 
 use crate::controller::state::State;
 
 mod diffs;
 mod files;
-mod commit_msg;
+mod buttons;
+
+pub trait Render {
+    fn render<B: Backend>(frame: &mut Frame<B>, area: Rect, state: &mut State);
+}
 
 pub fn main<B: Backend>(frame: &mut Frame<B>, state: &mut State) {
     let parent_block = Block::default()
@@ -18,7 +23,7 @@ pub fn main<B: Backend>(frame: &mut Frame<B>, state: &mut State) {
         .padding(Padding::new(3, 3, 1, 1));
     frame.render_widget(parent_block, frame.size());
 
-    let vertical_constraints = [Constraint::Percentage(80), Constraint::Percentage(10), Constraint::Percentage(10)];
+    let vertical_constraints = [Constraint::Percentage(95), Constraint::Percentage(5)];
     let vertical_layout = Layout::default()
         .direction(Direction::Vertical)
         .constraints(vertical_constraints)
@@ -32,7 +37,7 @@ pub fn main<B: Backend>(frame: &mut Frame<B>, state: &mut State) {
         .margin(1)
         .split(vertical_layout[0]);
 
-    files::render(frame, window_layout[0], state);
-    diffs::render(frame, window_layout[1], state);
-    commit_msg::render(frame, vertical_layout[1], state);
+    files::Files::render(frame, window_layout[0], state);
+    diffs::Diff::render(frame, window_layout[1], state);
+    buttons::Buttons::render(frame, vertical_layout[1], state);
 }

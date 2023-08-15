@@ -1,22 +1,16 @@
 #[derive(PartialEq)]
 pub enum Section {
     Files,
-    Buttons,
+    FileControls,
     Diff
-}
-
-#[derive(PartialEq)]
-pub enum Button {
-    SelectAll,
 }
 
 pub enum CursorAction {
     Up,
     Down,
-    Left,
-    Right,
+    SuperLeft,
+    SuperRight,
     Select,
-    Enter,
 }
 
 pub enum CursorError {
@@ -25,9 +19,8 @@ pub enum CursorError {
 }
 
 pub struct Cursor {
-    section: Section,
-    button: Button,
-    file_index: u8,
+    section: &'static Section,
+    file_index: usize,
     num_files: Option<usize>,
     diff_scroll_offset: (u16, u16),
 }
@@ -35,16 +28,20 @@ pub struct Cursor {
 impl Cursor {
     pub fn new() -> Self {
         Cursor {
-            section: Section::Files,
-            button: Button::SelectAll,
+            section: &Section::FileControls,
             file_index: 0,
             num_files: None,
             diff_scroll_offset: (0, 0),
         }
     }
 
-    pub fn is_in(&self, section: Section) -> bool {
+    #[deprecated]
+    pub fn is_in(&self, section: &'static Section) -> bool {
         self.section == section
+    }
+
+    pub fn get_section(&self) -> &'static Section {
+        self.section
     }
 
     pub fn set_num_files(&mut self, num_files: usize) {
@@ -52,6 +49,11 @@ impl Cursor {
     }
 
     pub fn try_dec_file_index(&mut self) -> Result<(), CursorError> {
+        let num_files = self.num_files.expect("Did not set num_files");
+        if num_files == 0 {
+            return Err(CursorError::NoFileExists);
+        }
+
         if self.file_index <= 0 {
             return Err(CursorError::OutOfBounds);
         }
@@ -66,7 +68,7 @@ impl Cursor {
             return Err(CursorError::NoFileExists);
         }
 
-        if self.file_index as usize >= num_files - 1 {
+        if self.file_index >= num_files - 1 {
             return Err(CursorError::OutOfBounds);
         }
 
@@ -74,16 +76,23 @@ impl Cursor {
         Ok(())
     }
 
-    pub fn get_file_index(&self) -> u8 {
+    pub fn get_file_index(&self) -> usize {
         self.file_index
     }
 
-    pub fn get_button(&self) -> &Button {
-        &self.button
+    pub fn move_to(&mut self, section: &'static Section) {
+        self.section = section;
     }
 
-    pub fn move_to(&mut self, section: Section) {
-        self.section = section;
+    pub fn move_to_index(&mut self, section: &'static Section, index: usize) {
+        self.move_to(section);
+        match section {
+            Section::Files => {
+                self.file_index = index
+            }
+            Section::FileControls => {}
+            Section::Diff => {}
+        }
     }
 
     pub fn reset_diff_scroll(&mut self) {
