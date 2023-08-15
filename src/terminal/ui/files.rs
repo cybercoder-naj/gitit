@@ -1,14 +1,16 @@
-use crate::global::cursor::Section;
 use ratatui::{
     backend::Backend,
+    Frame,
     layout::*,
     style::{Color, Modifier, Style},
     text::{Line, Span},
     widgets::{Block, Borders, Padding, Paragraph},
-    Frame,
 };
 
-use crate::global::state::State;
+use crate::global::{
+    cursor::Section,
+    state::State,
+};
 use crate::terminal::ui::Render;
 
 pub struct Files;
@@ -23,7 +25,6 @@ impl Render for Files {
         let all_filenames = generate_modified_files_paragraph(content_block, state);
         frame.render_widget(all_filenames, area);
     }
-
 }
 
 fn generate_modified_files_paragraph<'a>(block: Block<'a>, state: &'a mut State) -> Paragraph<'a> {

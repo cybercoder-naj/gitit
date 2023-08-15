@@ -1,4 +1,4 @@
-use crate::{domain, global};
+use crate::domain;
 
 pub struct ModifiedFile {
     filename: String,

@@ -1,6 +1,3 @@
-mod ui;
-mod keying;
-
 use std::{
     error::Error,
     io::{self, Stdout},
@@ -15,13 +12,15 @@ use crossterm::{
         LeaveAlternateScreen,
     },
 };
-
 use ratatui::{
     backend::CrosstermBackend,
     Terminal,
 };
 
 use crate::global::state::State;
+
+mod ui;
+mod keying;
 
 pub fn setup_terminal() -> Result<Terminal<CrosstermBackend<Stdout>>, Box<dyn Error>> {
     let mut stdout = io::stdout();

@@ -1,8 +1,11 @@
-use ratatui::backend::Backend;
-use ratatui::Frame;
-use ratatui::layout::{Alignment, Layout, Rect};
-use ratatui::text::{Line, Span};
-use ratatui::widgets::{Block, Paragraph};
+use ratatui::{
+    backend::Backend,
+    Frame,
+    layout::{Alignment, Rect},
+    text::{Line, Span},
+    widgets::{Block, Paragraph},
+};
+
 use crate::global::state::State;
 use crate::terminal::ui::Render;
 
@@ -16,7 +19,7 @@ impl Render for Buttons {
                 Span::raw("   "),
                 Span::raw("[ Commit and Push ]"),
                 Span::raw("   "),
-                Span::raw("[ Quit ]")
+                Span::raw("[ Quit ]"),
             ]
         );
 

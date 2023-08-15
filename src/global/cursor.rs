@@ -2,7 +2,7 @@
 pub enum Section {
     Files,
     FileControls,
-    Diff
+    Diff,
 }
 
 pub enum CursorAction {
@@ -109,7 +109,7 @@ impl Cursor {
     pub fn diff_scroll_down(&mut self) {
         self.diff_scroll_offset = (self.diff_scroll_offset.0 + 1, self.diff_scroll_offset.1)
     }
-    
+
     pub fn get_diff_scroll(&self) -> (u16, u16) {
         self.diff_scroll_offset
     }

@@ -1,4 +1,5 @@
 use std::error::Error;
+
 use crate::global::state::State;
 
 pub mod terminal;

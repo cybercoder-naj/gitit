@@ -1,5 +1,7 @@
 use std::process::Command;
+
 use regex::Regex;
+
 use crate::global::models::ModifiedFile;
 
 pub(crate) fn retrieve_files_from_git() -> Vec<String> {

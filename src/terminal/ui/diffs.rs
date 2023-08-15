@@ -1,15 +1,17 @@
 use ratatui::{
     backend::Backend,
+    Frame,
     layout::Rect,
     style::{Color, Modifier, Style},
     text::{Line, Span},
     widgets::{Block, Borders, Padding, Paragraph},
-    Frame,
 };
-use crate::domain;
 
-use crate::global::cursor::Section;
-use crate::global::state::State;
+use crate::domain;
+use crate::global::{
+    cursor::Section,
+    state::State,
+};
 use crate::terminal::ui::Render;
 
 pub struct Diff;
@@ -30,13 +32,12 @@ impl Render for Diff {
 
         frame.render_widget(paragraph, area);
     }
-
 }
 
 
 pub fn generate_git_paragaph<'a>(
     block: Block<'a>,
-    state: &'a mut State
+    state: &'a mut State,
 ) -> Paragraph<'a> {
     let m_file = state.get_current_file();
     match m_file {

@@ -1,5 +1,7 @@
-use crate::global::cursor::{Cursor, CursorAction, CursorError, Section};
-use super::models::ModifiedFile;
+use crate::global::{
+    cursor::{Cursor, CursorAction, CursorError, Section},
+    models::ModifiedFile,
+};
 
 pub struct State {
     m_files: Vec<ModifiedFile>,
@@ -92,7 +94,7 @@ impl State {
             }
             CursorAction::SuperLeft => {
                 match self.cursor.get_section() {
-                    Section::Files | Section::FileControls=> {
+                    Section::Files | Section::FileControls => {
                         // TODO make beep sound
                     }
                     Section::Diff => {
@@ -102,7 +104,7 @@ impl State {
             }
             CursorAction::SuperRight => {
                 match self.cursor.get_section() {
-                    Section::Files | Section::FileControls=> {
+                    Section::Files | Section::FileControls => {
                         self.cursor.move_to(&Section::Diff)
                     }
                     Section::Diff => {
@@ -116,9 +118,7 @@ impl State {
                         let m_file = &mut self.m_files[self.cursor.get_file_index()];
                         m_file.toggle_staged();
                     }
-                    Section::FileControls => {
-
-                    }
+                    Section::FileControls => {}
                     Section::Diff => {}
                 }
             }
