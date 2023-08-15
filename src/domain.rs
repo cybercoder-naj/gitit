@@ -1,19 +1,8 @@
-pub mod cursor;
-pub mod models;
-pub mod state;
-
-use regex::Regex;
-use state::State;
 use std::process::Command;
+use regex::Regex;
+use crate::global::models::ModifiedFile;
 
-use self::models::ModifiedFile;
-
-pub fn init(state: &mut State) {
-    let raw_files = retrieve_files_from_git();
-    state.set_files(raw_files);
-}
-
-fn retrieve_files_from_git() -> Vec<String> {
+pub(crate) fn retrieve_files_from_git() -> Vec<String> {
     let git_files = Command::new("git")
         .arg("status")
         .arg("-s")

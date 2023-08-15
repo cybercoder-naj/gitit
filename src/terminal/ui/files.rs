@@ -1,4 +1,4 @@
-use crate::controller::cursor::Section;
+use crate::global::cursor::Section;
 use ratatui::{
     backend::Backend,
     layout::*,
@@ -8,7 +8,7 @@ use ratatui::{
     Frame,
 };
 
-use crate::controller::state::State;
+use crate::global::state::State;
 use crate::terminal::ui::Render;
 
 pub struct Files;

@@ -6,7 +6,7 @@ use ratatui::{
 };
 use ratatui::layout::Rect;
 
-use crate::controller::state::State;
+use crate::global::state::State;
 
 mod diffs;
 mod files;

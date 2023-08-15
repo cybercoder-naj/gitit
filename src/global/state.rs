@@ -1,4 +1,4 @@
-use crate::controller::cursor::{Cursor, CursorAction, CursorError, Section};
+use crate::global::cursor::{Cursor, CursorAction, CursorError, Section};
 use super::models::ModifiedFile;
 
 pub struct State {

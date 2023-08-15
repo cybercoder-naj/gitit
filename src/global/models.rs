@@ -1,4 +1,4 @@
-use crate::controller;
+use crate::{domain, global};
 
 pub struct ModifiedFile {
     filename: String,
@@ -8,8 +8,8 @@ pub struct ModifiedFile {
 impl ModifiedFile {
     pub fn new(filename: String, staged: bool) -> Self {
         ModifiedFile {
-            filename: filename,
-            staged: staged,
+            filename,
+            staged,
         }
     }
 
@@ -22,7 +22,7 @@ impl ModifiedFile {
     }
 
     pub fn set_staged(&mut self) {
-        match controller::stage_file(self) {
+        match domain::stage_file(self) {
             true => self.staged = true,
             false => {
                 panic!("something went horribly wrong");
@@ -31,7 +31,7 @@ impl ModifiedFile {
     }
 
     pub fn unset_staged(&mut self) {
-        match controller::restore_file(self) {
+        match domain::restore_file(self) {
             true => self.staged = false,
             false => {
                 panic!("something went horribly wrong");

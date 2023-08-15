@@ -3,7 +3,7 @@ use ratatui::Frame;
 use ratatui::layout::{Alignment, Layout, Rect};
 use ratatui::text::{Line, Span};
 use ratatui::widgets::{Block, Paragraph};
-use crate::controller::state::State;
+use crate::global::state::State;
 use crate::terminal::ui::Render;
 
 pub struct Buttons;

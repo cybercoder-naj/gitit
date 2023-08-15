@@ -21,7 +21,7 @@ use ratatui::{
     Terminal,
 };
 
-use crate::controller::state::State;
+use crate::global::state::State;
 
 pub fn setup_terminal() -> Result<Terminal<CrosstermBackend<Stdout>>, Box<dyn Error>> {
     let mut stdout = io::stdout();

@@ -2,7 +2,7 @@ use std::{error::Error, time::Duration};
 
 use crossterm::event::{self, Event, KeyCode};
 
-use crate::controller::{cursor::CursorAction, state::State};
+use crate::global::{cursor::CursorAction, state::State};
 
 pub fn listen(state: &mut State) -> Result<bool, Box<dyn Error>> {
     if event::poll(Duration::from_millis(250))? {

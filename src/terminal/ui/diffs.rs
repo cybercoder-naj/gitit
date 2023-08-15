@@ -6,10 +6,10 @@ use ratatui::{
     widgets::{Block, Borders, Padding, Paragraph},
     Frame,
 };
-use crate::controller;
+use crate::domain;
 
-use crate::controller::cursor::Section;
-use crate::controller::state::State;
+use crate::global::cursor::Section;
+use crate::global::state::State;
 use crate::terminal::ui::Render;
 
 pub struct Diff;
@@ -43,7 +43,7 @@ pub fn generate_git_paragaph<'a>(
         None => Paragraph::new("No file available").block(block),
         Some(m_file) => {
             if state.cursor().is_in(&Section::Files) || state.cursor().is_in(&Section::Diff) {
-                let binding = controller::get_diff_string(m_file);
+                let binding = domain::get_diff_string(m_file);
                 let diff = binding.lines();
                 let mut text: Vec<Line> = vec![];
 

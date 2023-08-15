@@ -1,9 +1,9 @@
 use std::error::Error;
-use crate::controller::init;
-use crate::controller::state::State;
+use crate::global::state::State;
 
 pub mod terminal;
-pub mod controller;
+pub mod global;
+mod domain;
 
 pub fn start() -> Result<(), Box<dyn Error>> {
     let mut state = State::new();
@@ -13,4 +13,9 @@ pub fn start() -> Result<(), Box<dyn Error>> {
     terminal::run(&mut terminal, &mut state)?;
     terminal::restore_terminal(&mut terminal)?;
     Ok(())
+}
+
+pub fn init(state: &mut State) {
+    let raw_files = domain::retrieve_files_from_git();
+    state.set_files(raw_files);
 }
