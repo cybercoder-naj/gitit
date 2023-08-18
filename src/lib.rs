@@ -2,12 +2,12 @@ use std::error::Error;
 
 use crate::global::state::State;
 
-pub mod terminal;
-pub mod global;
+mod terminal;
+mod global;
 mod domain;
 
 pub fn start() -> Result<(), Box<dyn Error>> {
-    let mut state = State::new();
+    let mut state = State::default();
     init(&mut state);
 
     let mut terminal = terminal::setup_terminal()?;

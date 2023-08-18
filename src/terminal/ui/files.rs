@@ -11,6 +11,7 @@ use crate::global::{
     cursor::Section,
     state::State,
 };
+use crate::global::state::FileControlState;
 use crate::terminal::ui::Render;
 
 pub struct Files;
@@ -28,9 +29,37 @@ impl Render for Files {
 }
 
 fn generate_modified_files_paragraph<'a>(block: Block<'a>, state: &'a mut State) -> Paragraph<'a> {
+    state.configure_file_control_state();
     let m_files = state.get_files();
 
-    let text: Vec<_> = m_files
+    let mut text = vec![];
+    let mut file_controls = vec![];
+    file_controls.push(
+        Span::raw(
+            match state.cursor().get_section() {
+                Section::FileControls => "> ",
+                _ => "  "
+            }
+        )
+    );
+    file_controls.push(
+        Span::styled(
+            match state.get_file_control_state() {
+                FileControlState::NONE => "[ ] Select All",
+                FileControlState::SOME => "[-] Select All",
+                FileControlState::ALL => "[x] Deselect All"
+            },
+            match state.cursor().get_section() {
+                Section::FileControls => Style::default().add_modifier(Modifier::BOLD),
+                _ => Style::default()
+            }
+        )
+    );
+    text.push(Line::from(file_controls));
+    text.push(Line::default());
+
+
+    m_files
         .iter()
         .enumerate()
         .map(|(i, m_file)| {
@@ -65,7 +94,7 @@ fn generate_modified_files_paragraph<'a>(block: Block<'a>, state: &'a mut State)
 
             Line::from(spans)
         })
-        .collect();
+        .for_each(|line| text.push(line));
 
     Paragraph::new(text).block(block).alignment(Alignment::Left)
 }

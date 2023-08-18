@@ -25,8 +25,8 @@ pub struct Cursor {
     diff_scroll_offset: (u16, u16),
 }
 
-impl Cursor {
-    pub fn new() -> Self {
+impl Default for Cursor {
+    fn default() -> Self {
         Cursor {
             section: &Section::FileControls,
             file_index: 0,
@@ -34,8 +34,9 @@ impl Cursor {
             diff_scroll_offset: (0, 0),
         }
     }
+}
 
-    #[deprecated]
+impl Cursor {
     pub fn is_in(&self, section: &'static Section) -> bool {
         self.section == section
     }

@@ -3,19 +3,26 @@ use crate::global::{
     models::ModifiedFile,
 };
 
+pub enum FileControlState {
+    NONE,
+    SOME,
+    ALL
+}
+
+impl Default for FileControlState {
+    fn default() -> Self {
+        FileControlState::NONE
+    }
+}
+
+#[derive(Default)]
 pub struct State {
     m_files: Vec<ModifiedFile>,
     cursor: Cursor,
+    file_control_state: FileControlState
 }
 
 impl State {
-    pub fn new() -> Self {
-        Self {
-            m_files: vec![],
-            cursor: Cursor::new(),
-        }
-    }
-
     pub fn set_files(&mut self, files: Vec<String>) {
         self.m_files = files
             .iter()
@@ -49,6 +56,39 @@ impl State {
             return None;
         }
         Some(&self.m_files[self.cursor.get_file_index()])
+    }
+
+    fn stage_all_files(&mut self) {
+        for m_file in &mut self.m_files {
+            m_file.set_staged()
+        }
+    }
+
+    fn restore_all_files(&mut self) {
+        for m_file in &mut self.m_files {
+            m_file.unset_staged()
+        }
+    }
+
+    pub fn configure_file_control_state(&mut self) {
+        let mut state = FileControlState::NONE;
+        let mut c = 0usize;
+
+        for m_file in &self.m_files {
+            if m_file.is_staged() {
+                state = FileControlState::SOME;
+                c += 1;
+            }
+        }
+        if c == self.m_files.len() {
+            state = FileControlState::ALL
+        }
+
+        self.file_control_state = state
+    }
+
+    pub fn get_file_control_state(&self) -> &FileControlState {
+        &self.file_control_state
     }
 
     pub fn do_cursor_action(&mut self, action: CursorAction) {
@@ -118,7 +158,16 @@ impl State {
                         let m_file = &mut self.m_files[self.cursor.get_file_index()];
                         m_file.toggle_staged();
                     }
-                    Section::FileControls => {}
+                    Section::FileControls => {
+                        match self.file_control_state {
+                            FileControlState::NONE | FileControlState::SOME => {
+                                self.stage_all_files();
+                            }
+                            FileControlState::ALL => {
+                                self.restore_all_files();
+                            }
+                        }
+                    }
                     Section::Diff => {}
                 }
             }
