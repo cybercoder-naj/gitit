@@ -5,21 +5,26 @@ use ratatui::{
     text::{Line, Span},
     widgets::{Block, Paragraph},
 };
+use ratatui::prelude::Color;
+use ratatui::style::Style;
+use crate::global::cursor::Section;
 
-use crate::global::state::State;
+use crate::global::state::{ButtonIndex, State};
 use crate::terminal::ui::Render;
 
 pub struct Buttons;
 
 impl Render for Buttons {
     fn render<B: Backend>(frame: &mut Frame<B>, area: Rect, state: &mut State) {
+        let separator = || Span::raw("   ");
+
         let text = Line::from(
             vec![
-                Span::raw("[ Commit ]"),
-                Span::raw("   "),
-                Span::raw("[ Commit and Push ]"),
-                Span::raw("   "),
-                Span::raw("[ Quit ]"),
+                Span::styled("[ Commit ]", get_style(ButtonIndex::Commit, state)),
+                separator(),
+                Span::styled("[ Commit and Push ]", get_style(ButtonIndex::CommitAndPush, state)),
+                separator(),
+                Span::styled("[ Quit ]", get_style(ButtonIndex::Quit, state)),
             ]
         );
 
@@ -31,3 +36,10 @@ impl Render for Buttons {
     }
 }
 
+fn get_style(button_index: ButtonIndex, state: &State) -> Style {
+    if state.cursor().is_in(&Section::Buttons) && state.get_button_index() == &button_index {
+        Style::default().bg(Color::White).fg(Color::Black)
+    } else {
+        Style::default()
+    }
+}

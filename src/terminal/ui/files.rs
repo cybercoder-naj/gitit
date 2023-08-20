@@ -45,9 +45,9 @@ fn generate_modified_files_paragraph<'a>(block: Block<'a>, state: &'a mut State)
     file_controls.push(
         Span::styled(
             match state.get_file_control_state() {
-                FileControlState::NONE => "[ ] Select All",
-                FileControlState::SOME => "[-] Select All",
-                FileControlState::ALL => "[x] Deselect All"
+                FileControlState::None => "[ ] Select All",
+                FileControlState::Some => "[-] Select All",
+                FileControlState::All => "[x] Deselect All"
             },
             match state.cursor().get_section() {
                 Section::FileControls => Style::default().add_modifier(Modifier::BOLD),

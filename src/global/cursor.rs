@@ -3,11 +3,16 @@ pub enum Section {
     Files,
     FileControls,
     Diff,
+    Buttons
 }
 
 pub enum CursorAction {
     Up,
     Down,
+    Left,
+    Right,
+    SuperUp,
+    SuperDown,
     SuperLeft,
     SuperRight,
     Select,
@@ -93,6 +98,7 @@ impl Cursor {
             }
             Section::FileControls => {}
             Section::Diff => {}
+            _ => {}
         }
     }
 
