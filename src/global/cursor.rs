@@ -1,3 +1,5 @@
+use serde::{Serialize, Deserialize};
+
 #[derive(PartialEq)]
 pub enum Section {
     Files,
@@ -6,6 +8,7 @@ pub enum Section {
     Buttons
 }
 
+#[derive(Serialize, Deserialize, Debug)]
 pub enum CursorAction {
     Up,
     Down,

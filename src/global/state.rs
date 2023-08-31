@@ -1,4 +1,6 @@
+use std::{rc::Rc, cell::RefCell};
 use enigo::{Key, KeyboardControllable};
+use event_emitter_rs::EventEmitter;
 use crate::global::{
     cursor::{Cursor, CursorAction, CursorError, Section},
     models::ModifiedFile,
@@ -29,16 +31,25 @@ impl Default for ButtonIndex {
     }
 }
 
-#[derive(Default)]
 pub struct State {
     m_files: Vec<ModifiedFile>,
     cursor: Cursor,
     file_control_state: FileControlState,
     button_index: ButtonIndex,
-    popup_commit: bool
+    event_emitter: Rc<RefCell<EventEmitter>>
 }
 
 impl State {
+    pub fn new(event_emitter: Rc<RefCell<EventEmitter>>) -> Self {
+        Self {
+            m_files: Vec::<ModifiedFile>::default(),
+            cursor: Cursor::default(),
+            file_control_state: FileControlState::default(),
+            button_index: ButtonIndex::default(),
+            event_emitter
+        }
+    }
+
     pub fn set_files(&mut self, files: Vec<String>) {
         self.m_files = files
             .iter()
@@ -109,6 +120,12 @@ impl State {
 
     pub fn get_file_control_state(&self) -> &FileControlState {
         &self.file_control_state
+    }
+
+    pub fn listen_keypress(&self) {
+        self.event_emitter.borrow_mut().on("cursor_action", |param: CursorAction| {
+            println!("{:?}", self.get_files().len());
+        });
     }
 
     pub fn do_cursor_action(&mut self, action: CursorAction) {
@@ -201,7 +218,6 @@ impl State {
                                 enigo::Enigo::new().key_click(Key::Layout('q'))
                             }
                             _ => {
-                                self.popup_commit = true;
                             }
                         }
                     }
