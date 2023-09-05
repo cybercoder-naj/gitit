@@ -1,6 +1,5 @@
-use std::{rc::Rc, cell::RefCell};
+use std::sync::{Arc, Mutex};
 use enigo::{Key, KeyboardControllable};
-use event_emitter_rs::EventEmitter;
 use crate::global::{cursor::{Cursor, CursorAction, CursorError, Section}, event_emitter, models::ModifiedFile};
 
 pub enum FileControlState {
@@ -45,9 +44,9 @@ impl State {
         }
     }
 
-    pub fn listen(&mut self) {
-        event_emitter().on("cursor_action", |cursor_action: CursorAction| {
-            println!("{:?}", cursor_action);
+    pub fn listen(state: Arc<Mutex<Self>>) {
+        event_emitter().on("cursor_action", move |cursor_action: CursorAction| {
+            state.lock().unwrap().do_cursor_action(cursor_action);
         });
     }
 

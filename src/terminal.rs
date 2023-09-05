@@ -2,7 +2,7 @@ use std::{
     error::Error,
     io::{self, Stdout}, rc::Rc, cell::RefCell,
 };
-use std::sync::{Mutex, MutexGuard};
+use std::sync::{Arc, Mutex, MutexGuard};
 
 use crossterm::{
     execute,
@@ -39,9 +39,9 @@ pub fn restore_terminal(
     Ok(terminal.show_cursor()?)
 }
 
-pub fn run(terminal: &mut Terminal<CrosstermBackend<Stdout>>, mut state: State) -> Result<(), Box<dyn Error>> {
+pub fn run(terminal: &mut Terminal<CrosstermBackend<Stdout>>, state: Arc<Mutex<State>>) -> Result<(), Box<dyn Error>> {
     Ok(loop {
-        terminal.draw(|f| ui::main(f, &mut state))?;
+        terminal.draw(|f| ui::main(f, Arc::clone(&state)))?;
 
         if !keying::listen()? {
             break;

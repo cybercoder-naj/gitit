@@ -14,7 +14,6 @@ pub fn listen() -> Result<bool, Box<dyn Error>> {
             match key.code {
                 KeyCode::Char('q') => return Ok(false),
                 KeyCode::Char('k') => {
-                    println!("HIII");
                     event_emitter.emit("cursor_action", CursorAction::Up);
                 }
                 KeyCode::Char('j') => {

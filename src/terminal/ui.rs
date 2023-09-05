@@ -1,3 +1,4 @@
+use std::sync::{Arc, Mutex};
 use ratatui::{
     backend::Backend,
     Frame,
@@ -16,7 +17,7 @@ pub trait Render {
     fn render<B: Backend>(frame: &mut Frame<B>, area: Rect, state: &mut State);
 }
 
-pub fn main<B: Backend>(frame: &mut Frame<B>, state: &mut State) {
+pub fn main<B: Backend>(frame: &mut Frame<B>, state: Arc<Mutex<State>>) {
     let parent_block = Block::default()
         .title("Gitit")
         .borders(Borders::ALL)
@@ -36,6 +37,8 @@ pub fn main<B: Backend>(frame: &mut Frame<B>, state: &mut State) {
         .constraints(window_constraints)
         .margin(1)
         .split(vertical_layout[0]);
+
+    let state = &mut *state.lock().unwrap();
 
     files::Files::render(frame, window_layout[0], state);
     diffs::Diff::render(frame, window_layout[1], state);
