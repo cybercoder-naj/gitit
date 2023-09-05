@@ -1,4 +1,5 @@
-use std::error::Error;
+use std::{error::Error, rc::Rc, cell::RefCell};
+use event_emitter_rs::EventEmitter;
 
 use crate::global::state::State;
 
@@ -7,11 +8,12 @@ mod global;
 mod domain;
 
 pub fn start() -> Result<(), Box<dyn Error>> {
-    let mut state = State::default();
+    let mut event_emitter = Rc::new(RefCell::new(EventEmitter::new()));
+    let mut state = State::new(Rc::clone(&event_emitter));
     init(&mut state);
 
     let mut terminal = terminal::setup_terminal()?;
-    terminal::run(&mut terminal, &mut state)?;
+    terminal::run(&mut terminal, state, event_emitter)?;
     terminal::restore_terminal(&mut terminal)?;
     Ok(())
 }

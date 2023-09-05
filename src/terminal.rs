@@ -1,6 +1,6 @@
 use std::{
     error::Error,
-    io::{self, Stdout},
+    io::{self, Stdout}, rc::Rc, cell::RefCell,
 };
 
 use crossterm::{
@@ -12,6 +12,7 @@ use crossterm::{
         LeaveAlternateScreen,
     },
 };
+use event_emitter_rs::EventEmitter;
 use ratatui::{
     backend::CrosstermBackend,
     Terminal,
@@ -37,11 +38,11 @@ pub fn restore_terminal(
     Ok(terminal.show_cursor()?)
 }
 
-pub fn run(terminal: &mut Terminal<CrosstermBackend<Stdout>>, state: &mut State) -> Result<(), Box<dyn Error>> {
+pub fn run(terminal: &mut Terminal<CrosstermBackend<Stdout>>, mut state: State, event_emitter: Rc<RefCell<EventEmitter>>) -> Result<(), Box<dyn Error>> {
     Ok(loop {
-        terminal.draw(|f| ui::main(f, state))?;
+        terminal.draw(|f| ui::main(f, &mut state))?;
 
-        if !keying::listen(state)? {
+        if !keying::listen(Rc::clone(&event_emitter))? {
             break;
         }
     })
