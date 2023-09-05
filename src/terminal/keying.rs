@@ -1,7 +1,7 @@
-use std::{error::Error, time::Duration, rc::Rc, cell::RefCell};
+use std::{error::Error, time::Duration};
 
 use crossterm::event::{self, Event, KeyCode};
-use event_emitter_rs::EventEmitter;
+
 
 use crate::global::cursor::CursorAction;
 use crate::global::event_emitter;

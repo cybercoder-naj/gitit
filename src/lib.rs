@@ -1,17 +1,14 @@
-use std::{error::Error, rc::Rc, cell::RefCell};
+use std::{error::Error};
 use std::sync::{Arc, Mutex};
-use event_emitter_rs::EventEmitter;
-use crate::global::{event_emitter, state};
-use crate::global::cursor::CursorAction;
+
+
+
 
 use crate::global::state::State;
 
 mod terminal;
 mod global;
 mod domain;
-
-#[macro_use]
-extern crate lazy_static;
 
 pub fn start() -> Result<(), Box<dyn Error>> {
     let state = Arc::new(Mutex::new(State::new()));

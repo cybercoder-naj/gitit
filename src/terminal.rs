@@ -1,8 +1,8 @@
 use std::{
     error::Error,
-    io::{self, Stdout}, rc::Rc, cell::RefCell,
+    io::{self, Stdout},
 };
-use std::sync::{Arc, Mutex, MutexGuard};
+use std::sync::{Arc, Mutex};
 
 use crossterm::{
     execute,
@@ -13,7 +13,7 @@ use crossterm::{
         LeaveAlternateScreen,
     },
 };
-use event_emitter_rs::EventEmitter;
+
 use ratatui::{
     backend::CrosstermBackend,
     Terminal,
