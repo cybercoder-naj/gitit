@@ -255,6 +255,7 @@ dependencies = [
  "crossterm 0.27.0",
  "enigo",
  "event-emitter-rs",
+ "lazy_static",
  "predicates",
  "ratatui",
  "regex",

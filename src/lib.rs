@@ -1,5 +1,7 @@
 use std::{error::Error, rc::Rc, cell::RefCell};
 use event_emitter_rs::EventEmitter;
+use crate::global::{event_emitter, state};
+use crate::global::cursor::CursorAction;
 
 use crate::global::state::State;
 
@@ -7,18 +9,17 @@ mod terminal;
 mod global;
 mod domain;
 
+#[macro_use]
+extern crate lazy_static;
+
 pub fn start() -> Result<(), Box<dyn Error>> {
-    let mut event_emitter = Rc::new(RefCell::new(EventEmitter::new()));
-    let mut state = State::new(Rc::clone(&event_emitter));
-    init(&mut state);
+    let mut state = State::new();
+
+    state.set_files(domain::retrieve_files_from_git());
+    state.listen();
 
     let mut terminal = terminal::setup_terminal()?;
-    terminal::run(&mut terminal, state, event_emitter)?;
+    terminal::run(&mut terminal, state)?;
     terminal::restore_terminal(&mut terminal)?;
     Ok(())
-}
-
-pub fn init(state: &mut State) {
-    let raw_files = domain::retrieve_files_from_git();
-    state.set_files(raw_files);
 }

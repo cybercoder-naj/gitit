@@ -2,6 +2,7 @@ use std::{
     error::Error,
     io::{self, Stdout}, rc::Rc, cell::RefCell,
 };
+use std::sync::{Mutex, MutexGuard};
 
 use crossterm::{
     execute,
@@ -38,11 +39,11 @@ pub fn restore_terminal(
     Ok(terminal.show_cursor()?)
 }
 
-pub fn run(terminal: &mut Terminal<CrosstermBackend<Stdout>>, mut state: State, event_emitter: Rc<RefCell<EventEmitter>>) -> Result<(), Box<dyn Error>> {
+pub fn run(terminal: &mut Terminal<CrosstermBackend<Stdout>>, mut state: State) -> Result<(), Box<dyn Error>> {
     Ok(loop {
         terminal.draw(|f| ui::main(f, &mut state))?;
 
-        if !keying::listen(Rc::clone(&event_emitter))? {
+        if !keying::listen()? {
             break;
         }
     })
