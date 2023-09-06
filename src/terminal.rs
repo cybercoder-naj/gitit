@@ -13,16 +13,18 @@ use crossterm::{
         LeaveAlternateScreen,
     },
 };
-
 use ratatui::{
     backend::CrosstermBackend,
     Terminal,
 };
 
+use ui::Ui;
+
 use crate::global::state::State;
 
-mod ui;
+pub mod ui;
 mod keying;
+mod render;
 
 pub fn setup_terminal() -> Result<Terminal<CrosstermBackend<Stdout>>, Box<dyn Error>> {
     let mut stdout = io::stdout();
@@ -41,7 +43,7 @@ pub fn restore_terminal(
 
 pub fn run(terminal: &mut Terminal<CrosstermBackend<Stdout>>, state: Arc<Mutex<State>>) -> Result<(), Box<dyn Error>> {
     Ok(loop {
-        terminal.draw(|f| ui::main(f, Arc::clone(&state)))?;
+        terminal.draw(|f| Ui::default().main(f, Arc::clone(&state)))?;
 
         if !keying::listen()? {
             break;

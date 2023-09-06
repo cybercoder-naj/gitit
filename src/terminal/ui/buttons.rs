@@ -7,15 +7,16 @@ use ratatui::{
 };
 use ratatui::prelude::Color;
 use ratatui::style::Style;
+
 use crate::global::cursor::Section;
-
 use crate::global::state::{ButtonIndex, State};
-use crate::terminal::ui::Render;
+use crate::terminal::render::Render;
 
+#[derive(Default)]
 pub struct Buttons;
 
 impl Render for Buttons {
-    fn render<B: Backend>(frame: &mut Frame<B>, area: Rect, state: &mut State) {
+    fn render<B: Backend>(&mut self, frame: &mut Frame<B>, area: Rect, state: &mut State) {
         let separator = || Span::raw("   ");
 
         let text = Line::from(

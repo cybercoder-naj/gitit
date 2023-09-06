@@ -6,18 +6,43 @@ use ratatui::{
     text::{Line, Span},
     widgets::{Block, Borders, Padding, Paragraph},
 };
+use crate::domain;
 
 use crate::global::{
     cursor::Section,
     state::State,
 };
+use crate::global::models::ModifiedFile;
 use crate::global::state::FileControlState;
-use crate::terminal::ui::Render;
+use crate::terminal::render::Render;
 
-pub struct Files;
+pub struct Files {
+    m_files: Vec<ModifiedFile>
+}
+
+impl Default for Files {
+    fn default() -> Self {
+        let files = domain::retrieve_files_from_git();
+        let m_files = files
+            .iter()
+            .map(|name| {
+                let flags = &name[..1];
+
+                ModifiedFile::new(
+                    String::from(&name[3..]),
+                    !(flags == "??" || flags.starts_with(" ")),
+                )
+            })
+            .collect();
+
+        Self {
+            m_files
+        }
+    }
+}
 
 impl Render for Files {
-    fn render<B: Backend>(frame: &mut Frame<B>, area: Rect, state: &mut State) {
+    fn render<B: Backend>(&mut self, frame: &mut Frame<B>, area: Rect, state: &mut State) {
         let content_block = Block::default()
             .title("Files")
             .padding(Padding::uniform(1))
@@ -57,7 +82,6 @@ fn generate_modified_files_paragraph<'a>(block: Block<'a>, state: &'a mut State)
     );
     text.push(Line::from(file_controls));
     text.push(Line::default());
-
 
     m_files
         .iter()

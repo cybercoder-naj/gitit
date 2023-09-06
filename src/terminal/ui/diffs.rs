@@ -12,12 +12,13 @@ use crate::global::{
     cursor::Section,
     state::State,
 };
-use crate::terminal::ui::Render;
+use crate::terminal::render::Render;
 
+#[derive(Default)]
 pub struct Diff;
 
 impl Render for Diff {
-    fn render<B: Backend>(frame: &mut Frame<B>, area: Rect, state: &mut State) {
+    fn render<B: Backend>(&mut self, frame: &mut Frame<B>, area: Rect, state: &mut State) {
         let block = Block::default()
             .borders(Borders::ALL)
             .border_style(if state.cursor_mut().is_in(&Section::Diff) {

@@ -1,18 +1,21 @@
 use std::sync::{Arc, Mutex};
+
 use enigo::{Key, KeyboardControllable};
+
 use crate::global::{cursor::{Cursor, CursorAction, CursorError, Section}, event_emitter, models::ModifiedFile};
+use crate::terminal::ui::Ui;
 
 pub enum FileControlState {
     None,
     Some,
-    All
+    All,
 }
 
 #[derive(PartialEq)]
 pub enum ButtonIndex {
     Commit,
     CommitAndPush,
-    Quit
+    Quit,
 }
 
 impl Default for FileControlState {
@@ -27,6 +30,7 @@ impl Default for ButtonIndex {
     }
 }
 
+#[derive(Default)]
 pub struct State {
     m_files: Vec<ModifiedFile>,
     cursor: Cursor,
@@ -35,15 +39,6 @@ pub struct State {
 }
 
 impl State {
-    pub fn new() -> Self {
-        Self {
-            m_files: Vec::<ModifiedFile>::default(),
-            cursor: Cursor::default(),
-            file_control_state: FileControlState::default(),
-            button_index: ButtonIndex::default(),
-        }
-    }
-
     pub fn listen(state: Arc<Mutex<Self>>) {
         event_emitter().on("cursor_action", move |cursor_action: CursorAction| {
             state.lock().unwrap().do_cursor_action(cursor_action);
@@ -142,7 +137,7 @@ impl State {
                     }
                     Section::Diff => {
                         self.cursor.diff_scroll_up()
-                    },
+                    }
                     Section::Buttons => {
                         // TODO make a beep sound
                     }
@@ -163,7 +158,7 @@ impl State {
                     }
                     Section::Diff => {
                         self.cursor.diff_scroll_down();
-                    },
+                    }
                     Section::Buttons => {
                         // TODO make a beep sound
                     }
@@ -211,8 +206,7 @@ impl State {
                             ButtonIndex::Quit => {
                                 enigo::Enigo::new().key_click(Key::Layout('q'))
                             }
-                            _ => {
-                            }
+                            _ => {}
                         }
                     }
                 }
