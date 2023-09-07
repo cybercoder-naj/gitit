@@ -195,11 +195,11 @@ fn transform_file<'a>(list_state: &ListState, m_file: &'a ModifiedFile) -> ListI
             ListItem::new(Line::from(spans))
         }
         false => {
-            let style = Style::default().fg(Color::Red).add_modifier(Modifier::CROSSED_OUT);
+            let style = Style::default().fg(Color::Red);
 
             let mut spans = vec![
                 Span::styled("[ ] ", style),
-                Span::styled(m_file.name(), style),
+                Span::styled(m_file.name(), style.add_modifier(Modifier::CROSSED_OUT)),
             ];
             if add_blank {
                 spans.insert(0, Span::raw("  "))
