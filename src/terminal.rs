@@ -42,8 +42,10 @@ pub fn restore_terminal(
 }
 
 pub fn run(terminal: &mut Terminal<CrosstermBackend<Stdout>>, state: Arc<Mutex<State>>) -> Result<(), Box<dyn Error>> {
+    let mut ui = Ui::default();
+
     Ok(loop {
-        terminal.draw(|f| Ui::default().main(f, Arc::clone(&state)))?;
+        terminal.draw(|f| ui.main(f, Arc::clone(&state)))?;
 
         if !keying::listen()? {
             break;

@@ -1,3 +1,4 @@
+use std::sync::{Arc, Mutex};
 use ratatui::{
     backend::Backend,
     Frame,
@@ -34,6 +35,12 @@ impl Render for Buttons {
             .block(Block::default());
 
         frame.render_widget(paragraph, area);
+    }
+}
+
+impl Buttons {
+    pub fn new() -> Arc<Mutex<Self>> {
+        Arc::new(Mutex::new(Buttons::default()))
     }
 }
 

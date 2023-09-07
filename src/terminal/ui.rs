@@ -19,11 +19,20 @@ mod diffs;
 mod files;
 mod buttons;
 
-#[derive(Default)]
 pub struct Ui {
-    files: Files,
-    diff: Diff,
-    buttons: Buttons
+    files: Arc<Mutex<Files>>,
+    diff: Arc<Mutex<Diff>>,
+    buttons: Arc<Mutex<Buttons>>
+}
+
+impl Default for Ui {
+    fn default() -> Self {
+        Self {
+            files: Files::new(),
+            diff: Diff::new(),
+            buttons: Buttons::new()
+        }
+    }
 }
 
 impl Ui {
@@ -50,9 +59,9 @@ impl Ui {
 
         let state = &mut *state.lock().unwrap();
 
-        self.files.render(frame, window_layout[0], state);
-        self.diff.render(frame, window_layout[1], state);
-        self.buttons.render(frame, vertical_layout[1], state);
+        self.files.lock().unwrap().render(frame, window_layout[0], state);
+        self.diff.lock().unwrap().render(frame, window_layout[1], state);
+        self.buttons.lock().unwrap().render(frame, vertical_layout[1], state);
     }
 }
 

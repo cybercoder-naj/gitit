@@ -1,3 +1,4 @@
+use std::sync::{Arc, Mutex};
 use ratatui::{
     backend::Backend,
     Frame,
@@ -35,8 +36,13 @@ impl Render for Diff {
     }
 }
 
+impl Diff {
+    pub fn new() -> Arc<Mutex<Self>> {
+        Arc::new(Mutex::new(Diff::default()))
+    }
+}
 
-pub fn generate_git_paragaph<'a>(
+fn generate_git_paragaph<'a>(
     block: Block<'a>,
     state: &'a mut State,
 ) -> Paragraph<'a> {

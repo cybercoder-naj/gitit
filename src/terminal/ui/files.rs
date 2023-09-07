@@ -1,27 +1,58 @@
+use std::sync::{Arc, Mutex};
+
 use ratatui::{
     backend::Backend,
     Frame,
     layout::*,
-    style::{Color, Modifier, Style},
-    text::{Line, Span},
-    widgets::{Block, Borders, Padding, Paragraph},
+    widgets::{Block, Borders, Padding},
 };
-use crate::domain;
+use ratatui::style::{Color, Modifier, Style};
+use ratatui::text::{Line, Span};
+use ratatui::widgets::{List, ListItem, ListState, Paragraph};
 
-use crate::global::{
-    cursor::Section,
-    state::State,
-};
+use crate::domain;
+use crate::global::{event_emitter, KeypressListener};
+use crate::global::cursor::CursorAction;
 use crate::global::models::ModifiedFile;
-use crate::global::state::FileControlState;
+use crate::global::state::State;
 use crate::terminal::render::Render;
 
 pub struct Files {
-    m_files: Vec<ModifiedFile>
+    m_files: Vec<ModifiedFile>,
+    list_state: ListState,
 }
 
-impl Default for Files {
-    fn default() -> Self {
+impl Render for Files {
+    fn render<B: Backend>(&mut self, frame: &mut Frame<B>, area: Rect, state: &mut State) {
+        let content_block = Block::default()
+            .title("Files")
+            .borders(Borders::ALL);
+        let inner = content_block.inner(area);
+        frame.render_widget(content_block, area);
+
+        let layout = Layout::default()
+            .direction(Direction::Vertical)
+            .constraints([Constraint::Percentage(10), Constraint::Percentage(90)].as_ref())
+            .margin(1)
+            .split(inner);
+
+        let select = Paragraph::new(format!("  [{}] {}", "-", "Select All"));
+        frame.render_widget(select, layout[0]);
+
+        let files: Vec<_> = self.m_files
+            .iter()
+            .map(&mut transform)
+            .collect();
+
+        let files = List::new(files)
+            .highlight_symbol("> ");
+
+        frame.render_stateful_widget(files, layout[1], &mut self.list_state);
+    }
+}
+
+impl Files {
+    pub fn new() -> Arc<Mutex<Self>> {
         let files = domain::retrieve_files_from_git();
         let m_files = files
             .iter()
@@ -35,90 +66,99 @@ impl Default for Files {
             })
             .collect();
 
-        Self {
-            m_files
+        let this = Self {
+            m_files,
+            list_state: ListState::with_selected(ListState::default(), Some(0)),
+        };
+
+        let this = Arc::new(Mutex::new(this));
+
+        Self::on_keypress(Arc::clone(&this));
+
+        this
+    }
+
+    fn next(&mut self) {
+        let i = match self.list_state.selected() {
+            Some(i) => {
+                if i >= self.m_files.len() - 1 {
+                    0
+                } else {
+                    i + 1
+                }
+            }
+            None => 0,
+        };
+        self.list_state.select(Some(i));
+    }
+
+    fn previous(&mut self) {
+        let i = match self.list_state.selected() {
+            Some(i) => {
+                if i == 0 {
+                    self.m_files.len() - 1
+                } else {
+                    i - 1
+                }
+            }
+            None => 0,
+        };
+        self.list_state.select(Some(i));
+    }
+
+    fn unselect(&mut self) {
+        self.list_state.select(None);
+    }
+}
+
+impl KeypressListener for Files {
+    fn on_keypress(this: Arc<Mutex<Self>>) {
+        event_emitter().on("cursor_action", move |cursor_action: CursorAction| {
+            this.lock().unwrap().next();
+        });
+    }
+}
+
+fn transform(m_file: &ModifiedFile) -> ListItem {
+    match m_file.is_staged() {
+        true => {
+            let style = Style::default().fg(Color::Green);
+
+            ListItem::new(Line::from(
+                vec![
+                    Span::styled("[x] ", style),
+                    Span::styled(m_file.name(), style)
+                ]
+            ))
+        }
+        false => {
+            let style = Style::default().fg(Color::Red).add_modifier(Modifier::CROSSED_OUT);
+
+            ListItem::new(Line::from(
+                vec![
+                    Span::styled("[ ] ", style),
+                    Span::styled(m_file.name(), style)
+                ]
+            ))
+
         }
     }
-}
 
-impl Render for Files {
-    fn render<B: Backend>(&mut self, frame: &mut Frame<B>, area: Rect, state: &mut State) {
-        let content_block = Block::default()
-            .title("Files")
-            .padding(Padding::uniform(1))
-            .borders(Borders::ALL);
+    // let line = match m_file.is_staged() {
+    //     true => "[x] ",
+    //     false => "[ ] "
+    // };
+    // let mut line = String::from(line);
+    // line.push_str(&m_file.name());
 
-        let all_filenames = generate_modified_files_paragraph(content_block, state);
-        frame.render_widget(all_filenames, area);
-    }
-}
+    // match m_file.is_staged() {
+    //     true =>
+    //         ListItem::new(line)
+    //             .style(Style::default().fg(Color::Green)),
+    //     false =>
+    //         ListItem::new(line)
+    //             .style(Style::default().fg(Color::Red).add_modifier(Modifier::CROSSED_OUT))
+    // }
 
-fn generate_modified_files_paragraph<'a>(block: Block<'a>, state: &'a mut State) -> Paragraph<'a> {
-    state.configure_file_control_state();
-    let m_files = state.get_files();
-
-    let mut text = vec![];
-    let mut file_controls = vec![];
-    file_controls.push(
-        Span::raw(
-            match state.cursor().get_section() {
-                Section::FileControls => "> ",
-                _ => "  "
-            }
-        )
-    );
-    file_controls.push(
-        Span::styled(
-            match state.get_file_control_state() {
-                FileControlState::None => "[ ] Select All",
-                FileControlState::Some => "[-] Select All",
-                FileControlState::All => "[x] Deselect All"
-            },
-            match state.cursor().get_section() {
-                Section::FileControls => Style::default().add_modifier(Modifier::BOLD),
-                _ => Style::default()
-            }
-        )
-    );
-    text.push(Line::from(file_controls));
-    text.push(Line::default());
-
-    m_files
-        .iter()
-        .enumerate()
-        .map(|(i, m_file)| {
-            let mut style = Style::default().fg(match m_file.is_staged() {
-                true => Color::Green,
-                false => Color::Red,
-            });
-            let mut prefix: String = String::from(
-                if state.cursor().is_in(&Section::Files) && state.cursor().get_file_index() == i
-                {
-                    "> "
-                } else {
-                    "  "
-                },
-            );
-
-            prefix.push_str(match m_file.is_staged() {
-                true => "[x] ",
-                false => "[ ] ",
-            });
-
-            if m_file.name().chars().last().unwrap() == '/' {
-                style = style.add_modifier(Modifier::BOLD);
-            }
-            let mut spans = vec![Span::styled(prefix, style)];
-
-            let filename = m_file.name();
-            if !m_file.is_staged() {
-                style = style.add_modifier(Modifier::CROSSED_OUT);
-            }
-            spans.push(Span::styled(filename, style));
-
-            Line::from(spans)
-        })
-        .for_each(|line| text.push(line));
-
-    Paragraph::new(text).block(block).alignment(Alignment::Left)
+    // ListItem::new(Line::from(vec![Span::styled("Hi", Style::default().fg(Color::Green))]))
 }
