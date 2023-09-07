@@ -52,4 +52,3 @@ pub fn run(terminal: &mut Terminal<CrosstermBackend<Stdout>>, state: Arc<Mutex<S
         }
     })
 }
-

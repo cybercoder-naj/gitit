@@ -40,9 +40,9 @@ pub struct State {
 
 impl State {
     pub fn listen(state: Arc<Mutex<Self>>) {
-        event_emitter().on("cursor_action", move |cursor_action: CursorAction| {
-            state.lock().unwrap().do_cursor_action(cursor_action);
-        });
+        // event_emitter().on("cursor_action", move |cursor_action: CursorAction| {
+        //     state.lock().unwrap().do_cursor_action(cursor_action);
+        // });
     }
 
     pub fn set_files(&mut self, files: Vec<String>) {
@@ -250,3 +250,4 @@ impl State {
         }
     }
 }
+

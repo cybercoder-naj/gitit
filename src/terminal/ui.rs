@@ -64,4 +64,3 @@ impl Ui {
         self.buttons.lock().unwrap().render(frame, vertical_layout[1], state);
     }
 }
-
