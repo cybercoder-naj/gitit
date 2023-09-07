@@ -13,6 +13,7 @@ use crate::global::{
     cursor::Section,
     state::State,
 };
+use crate::global::models::ModifiedFile;
 use crate::terminal::render::Render;
 
 #[derive(Default)]
@@ -46,7 +47,7 @@ fn generate_git_paragaph<'a>(
     block: Block<'a>,
     state: &'a mut State,
 ) -> Paragraph<'a> {
-    let m_file = state.get_current_file();
+    let m_file = None;
     match m_file {
         None => Paragraph::new("No file available").block(block),
         Some(m_file) => {

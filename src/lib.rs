@@ -9,8 +9,6 @@ mod domain;
 
 pub fn start() -> Result<(), Box<dyn Error>> {
     let state = Arc::new(Mutex::new(State::default()));
-
-    state.lock().unwrap().set_files(domain::retrieve_files_from_git());
     State::listen(Arc::clone(&state));
 
     let mut terminal = terminal::setup_terminal()?;

@@ -60,7 +60,7 @@ impl Ui {
         let state = &mut *state.lock().unwrap();
 
         self.files.lock().unwrap().render(frame, window_layout[0], state);
-        self.diff.lock().unwrap().render(frame, window_layout[1], state);
+        // self.diff.lock().unwrap().render(frame, window_layout[1], state);
         self.buttons.lock().unwrap().render(frame, vertical_layout[1], state);
     }
 }
