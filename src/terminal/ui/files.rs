@@ -12,6 +12,7 @@ use ratatui::widgets::{List, ListItem, ListState, Paragraph};
 
 use crate::domain;
 use crate::global::{event_emitter, KeypressListener};
+use crate::global::constants::EVENT_KEYPRESS;
 use crate::global::cursor::CursorAction;
 use crate::global::models::ModifiedFile;
 use crate::global::state::State;
@@ -75,7 +76,7 @@ impl Files {
         let mut this = Self {
             m_files,
             list_state: ListState::with_selected(ListState::default(), Some(0)),
-            control_state: FileControlState::None
+            control_state: FileControlState::None,
         };
         this.configure_control_state();
 
@@ -126,7 +127,7 @@ impl Files {
 
 impl KeypressListener for Files {
     fn on_keypress(this: Arc<Mutex<Self>>) {
-        event_emitter().on("cursor_action", move |cursor_action: CursorAction| {
+        event_emitter().on(EVENT_KEYPRESS, move |cursor_action: CursorAction| {
             let this = &mut *this.lock().unwrap();
 
             match cursor_action {
@@ -136,8 +137,6 @@ impl KeypressListener for Files {
                 CursorAction::Down => {
                     this.next();
                 }
-                CursorAction::SuperDown => {}
-                CursorAction::SuperRight => {}
                 CursorAction::Select => {
                     if let Some(i) = this.list_state.selected() {
                         this.m_files[i].toggle_staged();

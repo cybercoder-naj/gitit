@@ -1,6 +1,7 @@
 pub mod cursor;
 pub mod state;
 pub mod models;
+pub mod constants;
 
 
 use std::sync::{Arc, Mutex, MutexGuard};
