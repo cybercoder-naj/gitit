@@ -6,11 +6,11 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-crossterm = "0.27.0"
+crossterm = "0.27"
 enigo = "0.1.2"
 event-emitter-rs = "0.1.4"
 lazy_static = "1.4.0"
-ratatui = { version = "0.22.0", features = ["all-widgets"] }
+ratatui = "0.23"
 regex = "1.9.3"
 serde = "1.0.188"
 
