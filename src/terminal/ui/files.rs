@@ -8,7 +8,7 @@ use ratatui::{
 };
 use ratatui::style::{Color, Modifier, Style};
 use ratatui::text::{Line, Span};
-use ratatui::widgets::{List, ListItem, ListState, Paragraph};
+use ratatui::widgets::{HighlightSpacing, List, ListItem, ListState, Paragraph};
 
 use crate::domain;
 use crate::global::{event_emitter, KeypressListener};
@@ -40,7 +40,7 @@ impl Render for Files {
 
         let layout = Layout::default()
             .direction(Direction::Vertical)
-            .constraints([Constraint::Percentage(10), Constraint::Percentage(90)].as_ref())
+            .constraints([Constraint::Percentage(5), Constraint::Percentage(95)].as_ref())
             .margin(1)
             .split(inner);
 
@@ -48,11 +48,12 @@ impl Render for Files {
 
         let files: Vec<_> = self.m_files
             .iter()
-            .map(|m_file| transform_file(&self.list_state, m_file))
+            .map(&mut transform_file)
             .collect();
 
         let files = List::new(files)
-            .highlight_symbol("> ");
+            .highlight_symbol("> ")
+            .highlight_spacing(HighlightSpacing::Always);
 
         frame.render_stateful_widget(files, layout[1], &mut self.list_state);
     }
@@ -178,32 +179,24 @@ fn render_select_option<B: Backend>(this: &Files, frame: &mut Frame<B>, area: Re
     frame.render_widget(select, area);
 }
 
-fn transform_file<'a>(list_state: &ListState, m_file: &'a ModifiedFile) -> ListItem<'a> {
-    let add_blank = list_state.selected() == None;
-
+fn transform_file(m_file: &ModifiedFile) -> ListItem {
     match m_file.is_staged() {
         true => {
             let style = Style::default().fg(Color::Green);
 
-            let mut spans = vec![
+            let spans = vec![
                 Span::styled("[x] ", style),
                 Span::styled(m_file.name(), style),
             ];
-            if add_blank {
-                spans.insert(0, Span::raw("  "))
-            }
             ListItem::new(Line::from(spans))
         }
         false => {
             let style = Style::default().fg(Color::Red);
 
-            let mut spans = vec![
+            let spans = vec![
                 Span::styled("[ ] ", style),
                 Span::styled(m_file.name(), style.add_modifier(Modifier::CROSSED_OUT)),
             ];
-            if add_blank {
-                spans.insert(0, Span::raw("  "))
-            }
             ListItem::new(Line::from(spans))
         }
     }
